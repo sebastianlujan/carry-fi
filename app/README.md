@@ -1,32 +1,15 @@
-# React + TypeScript + Vite
+# Carry — app
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Static, non-custodial frontend. Vite + React 19 + TypeScript + viem + Privy + TanStack Query.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+pnpm install
+pnpm dev            # set VITE_PRIVY_APP_ID in .env (otherwise burner-wallet mode)
+pnpm build          # static build → dist/
+pnpm exec tsc --noEmit
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Layout rule: `src/chain/*` is pure TypeScript (no React) — registry, viem clients with RPC
+failover, vault/bridge/morpho/loop logic. React hooks live in `src/hooks.ts`; screens in
+`src/screens/`. Every address lives in `src/chain/registry.ts` only. Amounts are `bigint`
+end-to-end and every write is `simulateContract`-ed before signing.

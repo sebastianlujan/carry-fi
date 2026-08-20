@@ -1,66 +1,18 @@
-## Foundry
+# Carry — contracts
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Foundry project. Solidity 0.8.28.
 
-Foundry consists of:
-
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
+```bash
+forge build
+forge test --fork-url https://arb1.arbitrum.io/rpc -vv     # 10 tests on a real Arbitrum fork
+forge script script/DeployLoop.s.sol --rpc-url arbitrum --broadcast -i 1   # real deploy (gas only)
 ```
 
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+- `src/CarryLoop.sol` — atomic leverage/deleverage of the peso carry via `Morpho.flashLoan`.
+  User owns the position; router holds nothing between txs; perf fee only on profit (20% cap).
+- `src/SArgtOracle.sol` — sARGt/USDC oracle composing Twin's live ARGt/USDC feed with the
+  vault share price.
+- `src/swappers/` — pluggable `ISwapper`: `UniV3Swapper` (production) and `SeededSwapper`
+  (fork tests — stands in for the ARGt/USDC DEX liquidity that does not exist yet).
+- `test/` — `LoopFork` (end-to-end loop, fees, guards), `VaultFork` (milestone 2 + proof
+  that the vault's `max*()` lie), `BridgeFork` (milestone 3 + dust flooring).

@@ -1,12 +1,12 @@
-# Carry — pesos that earn
+# Carry — the peso carry trade, in a wallet
 
 **A non-custodial, Payy-style wallet for ARGt (Twin Stablecoins) with the Argentine peso
 carry trade as the product: real Morpho yield, LayerZero bridging, and an atomic leveraged
 loop built on flash loans.**
 
 🟢 **Live**: https://carry-predictumx.vercel.app
-🚲 Logo: *la bicicleta* — "la bicicleta financiera" is the lifelong Argentine name for
-exactly this trade.
+🚲 The logo is a bicycle: *"la bicicleta financiera"* ("the financial bicycle") is the
+lifelong Argentine name for exactly this trade.
 📱 Mobile-first — open it on your phone.
 
 ---
