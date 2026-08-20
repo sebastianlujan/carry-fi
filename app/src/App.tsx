@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useWallet } from './wallet'
 import Bike from './Bike'
+import { IconWallet, IconChart, IconDots, IconTrend } from './Icons'
+import { useCarryRates } from './hooks'
 import Home from './screens/Home'
 import Send from './screens/Send'
 import Earn from './screens/Earn'
@@ -14,8 +16,18 @@ function Wordmark() {
   return (
     <div className="wordmark">
       <Bike width={34} />
-      carry
+      CarryFi
     </div>
+  )
+}
+
+function ApyPill() {
+  const { data } = useCarryRates()
+  const apy = data ? (data.supplyApy * 100).toFixed(1) : '…'
+  return (
+    <span className="pill" title="Supply APY live del market ARGt/USDC en Morpho (Arbitrum)">
+      CARRY APY <b>{apy}%</b> <IconTrend />
+    </span>
   )
 }
 
@@ -38,6 +50,7 @@ export default function App() {
         <div className="topbar"><Wordmark /></div>
         <div className="screen">
           <div className="login-hero">
+            <Bike width={110} spin />
             <h1>Pesos que rinden.</h1>
             <p>Wallet non-custodial de ARGt. El carry del peso, sin bancos y sin custodios. Tus llaves, tu plata.</p>
           </div>
@@ -59,11 +72,11 @@ export default function App() {
     menu: <Menu />,
   }
 
-  const navItems: { id: Screen; label: string }[] = [
-    { id: 'home', label: 'Wallet' },
-    { id: 'earn', label: 'Earn' },
-    { id: 'loop', label: 'Loop' },
-    { id: 'menu', label: 'Menú' },
+  const navItems: { id: Screen; label: string; icon: React.ReactNode }[] = [
+    { id: 'home', label: 'Wallet', icon: <IconWallet /> },
+    { id: 'loop', label: 'Carry', icon: <Bike width={26} /> },
+    { id: 'earn', label: 'Posición', icon: <IconChart /> },
+    { id: 'menu', label: 'Más', icon: <IconDots /> },
   ]
   const active = screen === 'send' || screen === 'bridge' ? 'home' : screen
 
@@ -71,33 +84,17 @@ export default function App() {
     <div className="phone">
       <div className="topbar">
         <Wordmark />
-        <HealthPill />
+        <ApyPill />
       </div>
       {S[screen]}
       <nav className="nav">
         {navItems.map((n) => (
           <button key={n.id} className={active === n.id ? 'active' : ''} onClick={() => setScreen(n.id)}>
+            {n.icon}
             {n.label}
           </button>
         ))}
       </nav>
     </div>
-  )
-}
-
-function HealthPill() {
-  const { address } = useWallet()
-  // pill estilo "PTS 300k" de Payy, acá muestra el APY real del carry
-  return <CarryPill key={address ?? 'anon'} />
-}
-
-import { useCarryRates } from './hooks'
-function CarryPill() {
-  const { data } = useCarryRates()
-  const apy = data ? (data.supplyApy * 100).toFixed(1) : '…'
-  return (
-    <span className="pill" title="Supply APY live del market ARGt/USDC en Morpho (Arbitrum)">
-      CARRY <b>{apy}%</b>
-    </span>
   )
 }

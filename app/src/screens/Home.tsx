@@ -2,8 +2,9 @@ import { useQuery } from '@tanstack/react-query'
 import { useWallet } from '../wallet'
 import { useBalances, useVaultPosition, useLoopPosition } from '../hooks'
 import { fmtMoney, fmtArgt } from '../chain/format'
-import { CHAINS, CHAIN_IDS, ARBITRUM_ID } from '../chain/registry'
+import { CHAINS, CHAIN_IDS } from '../chain/registry'
 import { argtToUsdc } from '../chain/loop'
+import { IconShield, Chevron } from '../Icons'
 import type { Screen } from '../App'
 
 export default function Home({ go }: { go: (s: Screen) => void }) {
@@ -17,55 +18,77 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
   const loopArgt = loop?.collateralArgt ?? 0n
   const debtUsdc = loop?.debtUsdc ?? 0n
 
-  // deuda del loop expresada en ARGt para el total (feed real)
   const { data: debtArgt } = useQuery({
     queryKey: ['debtArgt', debtUsdc.toString()],
     queryFn: async () => {
       if (debtUsdc === 0n) return 0n
-      const oneArgtInUsdc = await argtToUsdc(10n ** 18n) // USDC por 1 ARGt
+      const oneArgtInUsdc = await argtToUsdc(10n ** 18n)
       return oneArgtInUsdc === 0n ? 0n : (debtUsdc * 10n ** 18n) / oneArgtInUsdc
     },
   })
 
-  const total = walletArgt + vaultArgt + loopArgt - (debtArgt ?? 0n)
+  const working = vaultArgt + loopArgt - (debtArgt ?? 0n) // capital trabajando
+  const total = walletArgt + working
+  // ganancia devengada sobre las shares actuales (share price > 1): aproximación honesta
+  const gains = vault ? vault.argtValue - vault.shares : 0n
   const health = loop && loop.debtUsdc > 0n ? Number(loop.healthWad) / 1e18 : null
+  const riesgo = health === null ? 'Bajo' : health > 1.5 ? 'Moderado' : health > 1.15 ? 'Alto' : 'Crítico'
+  const riesgoClass = health === null ? 'health-good' : health > 1.5 ? '' : health > 1.15 ? 'health-warn' : 'health-bad'
+  const pedaleando = loopArgt > 0n || vaultArgt > 0n
 
   return (
     <div className="screen">
-      <div className="balance-label">Total en pesos</div>
-      <div className="balance"><span className="cur">$</span>{fmtMoney(total)}</div>
-      <div className="sub">ARGt en {CHAIN_IDS.filter((id) => (balances?.[id] ?? 0n) > 0n).length || '3'} redes · non-custodial</div>
-
-      <div className="card">
-        <h3>Posiciones</h3>
-        <div className="row"><span className="k">Disponible</span><span className="v">${fmtArgt(walletArgt)}</span></div>
-        <div className="row"><span className="k">Rindiendo (vault)</span><span className="v">${fmtArgt(vaultArgt)}</span></div>
-        {loopArgt > 0n && (
-          <div className="row"><span className="k">Loop (colateral)</span><span className="v">${fmtArgt(loopArgt)}</span></div>
-        )}
-        {debtUsdc > 0n && (
-          <div className="row"><span className="k">Deuda USDC</span><span className="v">−{(Number(debtUsdc) / 1e6).toFixed(2)} US$</span></div>
-        )}
-        {health !== null && (
-          <div className="row">
-            <span className="k">Salud</span>
-            <span className={`v ${health > 1.5 ? 'health-good' : health > 1.15 ? 'health-warn' : 'health-bad'}`}>
-              {health.toFixed(2)}
-            </span>
-          </div>
-        )}
-        {balances && (
-          <>
-            <hr className="divider" />
-            {CHAIN_IDS.map((id) => (
-              <div className="row" key={id}>
-                <span className="k">{CHAINS[id].name}</span>
-                <span className="v">${fmtArgt(balances[id])}</span>
-              </div>
-            ))}
-          </>
-        )}
+      <div className="greet">
+        <h1>Hola, viajero 👋</h1>
+        <p>{pedaleando ? 'Tu Carrybike está pedaleando.' : 'Tu Carrybike está lista para pedalear.'}</p>
       </div>
+
+      <div className="balance-label" style={{ marginTop: 18 }}>Total en pesos</div>
+      <div className="balance" style={{ fontSize: 'clamp(44px,12vw,60px)' }}>
+        <span className="cur">$</span>{fmtMoney(total)}
+      </div>
+
+      <div className="pos-card">
+        <h3>Tu posición activa</h3>
+        <div className="pos-grid">
+          <div className="cell">
+            <div className="k">Capital trabajando</div>
+            <div className="v">${fmtArgt(working)}</div>
+          </div>
+          <div className="cell">
+            <div className="k">Ganancia acumulada</div>
+            <div className="v gain">+${fmtArgt(gains)}</div>
+          </div>
+          <div className="cell">
+            <div className="k">Riesgo</div>
+            <div className={`v ${riesgoClass}`} style={health === null ? { color: 'var(--lime)' } : undefined}>{riesgo}</div>
+          </div>
+        </div>
+        <button className="pos-cta" onClick={() => go('earn')}>
+          <span>Ver posición y rendimiento</span> <Chevron />
+        </button>
+      </div>
+
+      <div className="trust">
+        <div className="icircle"><IconShield /></div>
+        <div style={{ flex: 1 }}>
+          <b>Tus fondos son tuyos</b>
+          <p>CarryFi es non-custodial. Vos mantenés el control de tu wallet y de tus claves.</p>
+          <button className="how" onClick={() => go('menu')}><span>¿Cómo funciona?</span> <Chevron w={16} /></button>
+        </div>
+      </div>
+
+      {balances && walletArgt > 0n && (
+        <div className="card" style={{ background: '#fff' }}>
+          <h3>Por red</h3>
+          {CHAIN_IDS.map((id) => (
+            <div className="row" key={id}>
+              <span className="k">{CHAINS[id].name}</span>
+              <span className="v">${fmtArgt(balances[id])}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="actions">
         <button className="btn primary" onClick={() => go('send')}>Enviar <span>↗</span></button>
@@ -74,5 +97,3 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
     </div>
   )
 }
-// nota: ARBITRUM_ID queda importado para futuros usos de deep-link por red
-void ARBITRUM_ID
