@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import QRCode from 'qrcode'
 import { useWallet } from '../wallet'
 import { CHAINS, CHAIN_IDS } from '../chain/registry'
+import { shortAddr } from '../chain/format'
 import { IconCopy } from '../Icons'
 
 export default function Receive({ back }: { back: () => void }) {
@@ -45,15 +46,11 @@ export default function Receive({ back }: { back: () => void }) {
       </div>
 
       <button className="addr-chip" onClick={copy}>
-        <span className="mono">{address}</span>
+        <span className="mono" style={{ fontSize: 16 }}>{address ? shortAddr(address) : ''}</span>
         <span className="chip" style={{ flexShrink: 0 }}><IconCopy /> {copied ? '✓' : 'Copiar'}</span>
       </button>
 
-      <div className="banner">
-        Compartí el QR o la dirección con quien te manda ARGt (o cualquier token EVM).
-        Verificá siempre los primeros y últimos caracteres:{' '}
-        <b className="mono">{address ? `${address.slice(0, 6)}…${address.slice(-4)}` : ''}</b>
-      </div>
+      <div className="banner">Compartí el QR o copiá la dirección completa con el botón.</div>
 
       <div className="actions">
         <button className="btn primary wide" onClick={copy}>{copied ? 'Copiada ✓' : 'Copiar dirección'}</button>

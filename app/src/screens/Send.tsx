@@ -4,7 +4,7 @@ import { useWallet } from '../wallet'
 import { useBalances } from '../hooks'
 import { CHAINS, CHAIN_IDS, type ChainId, ARBITRUM_ID } from '../chain/registry'
 import { erc20Abi } from '../chain/abis'
-import { fmtArgt, parseArgt } from '../chain/format'
+import { fmtArgt, parseArgt, shortAddr } from '../chain/format'
 import { runTx, errMsg } from '../tx'
 import { useNetwork } from '../network'
 
@@ -91,7 +91,7 @@ export default function Send({ back }: { back: () => void }) {
           <div className="card dark">
             <div className="big-stat">${amountStr}</div>
             <div className="row"><span className="k">ARGt en</span><span className="v">{CHAINS[chain].name}</span></div>
-            <div className="row"><span className="k">Para</span><span className="v mono">{to.slice(0, 10)}…{to.slice(-6)}</span></div>
+            <div className="row"><span className="k">Para</span><span className="v mono">{shortAddr(to)}</span></div>
           </div>
           <div className="banner">Transferencia on-chain directa desde tu wallet. Irreversible una vez confirmada.</div>
           {err && <div className="status err">{err}</div>}
