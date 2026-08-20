@@ -28,7 +28,8 @@ input, select { font-family: inherit; color: inherit; }
 }
 @media (min-width: 520px) { .phone { height: 96dvh; margin-top: 2dvh; border-radius: 36px; box-shadow: 0 30px 80px rgba(20,20,20,.35); } }
 
-.topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 22px 0; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 20px 0; }
+.topbar .wordmark { min-width: 0; flex-shrink: 0; }
 .wordmark { font-weight: 800; font-size: 26px; letter-spacing: -0.04em; display: flex; align-items: center; gap: 7px; }
 .wordmark svg { display: block; }
 .pill {
@@ -203,10 +204,11 @@ input, select { font-family: inherit; color: inherit; }
 @keyframes pop { from { opacity: 0; transform: translateY(-4px) } }
 
 /* ── header: APY + red agrupados a la derecha ─────────────── */
-.topbar-right { display: flex; align-items: center; gap: 8px; }
+.topbar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .pill.apy { padding: 6px 10px; font-size: 11px; gap: 5px; }
 .pill.apy b { padding: 2px 7px; font-size: 10.5px; }
-@media (max-width: 380px) { .pill.apy { display: none; } }
+@media (max-width: 430px) { .pill.apy .apy-word { display: none; } }
+@media (max-width: 340px) { .pill.apy { display: none; } }
 
 /* ── gráfica de Posición (lima, trazo negro) ──────────────── */
 .earn-chart { background: var(--lime); border: 1.5px solid var(--ink); border-radius: 20px; padding: 14px 14px 10px; margin-top: 14px; }

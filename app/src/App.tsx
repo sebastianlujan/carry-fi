@@ -30,7 +30,7 @@ function ApyPill() {
   const apy = data ? (data.supplyApy * 100).toFixed(1) : '…'
   return (
     <span className="pill apy" title="Supply APY live del market ARGt/USDC en Morpho">
-      CARRY <b>{apy}%</b> <IconTrend />
+      <span className="apy-word">CARRY</span> <b>{apy}%</b> <IconTrend />
     </span>
   )
 }
