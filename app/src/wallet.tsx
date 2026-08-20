@@ -1,7 +1,7 @@
 // Wallet non-custodial: Privy embedded (llaves en el device) con fallback burner
 // (VITE_WALLET=burner o sin VITE_PRIVY_APP_ID) para que la demo nunca se trabe.
-import { createContext, useContext, useMemo, type ReactNode } from 'react'
-import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth'
+import { createContext, useContext, useEffect, useMemo, useRef, type ReactNode } from 'react'
+import { PrivyProvider, usePrivy, useWallets, useCreateWallet } from '@privy-io/react-auth'
 import {
   createWalletClient, custom, http, publicActions,
   type Address, type Chain, type WalletClient, type PublicActions,
@@ -71,10 +71,24 @@ function BurnerProvider({ children }: { children: ReactNode }) {
 function PrivyBridge({ children }: { children: ReactNode }) {
   const { ready, authenticated, login, logout, exportWallet } = usePrivy()
   const { wallets } = useWallets()
+  const { createWallet } = useCreateWallet()
   const wallet = wallets.find((w) => w.walletClientType === 'privy') ?? wallets[0]
 
+  // El dashboard tiene create_on_login=off: tras autenticar, la wallet embebida no
+  // aparece sola. La creamos explicito una unica vez; si ya existe, el error se ignora.
+  const creating = useRef(false)
+  useEffect(() => {
+    if (ready && authenticated && !wallets.some((w) => w.walletClientType === 'privy') && !creating.current) {
+      creating.current = true
+      createWallet().catch(() => { creating.current = false })
+    }
+  }, [ready, authenticated, wallets, createWallet])
+
+  // autenticado pero sin wallet todavia => "creando" (spinner), no rebotar al login
+  const settled = ready && (!authenticated || !!wallet)
+
   const value = useMemo<WalletCtx>(() => ({
-    ready,
+    ready: settled,
     address: authenticated && wallet ? (wallet.address as Address) : null,
     login,
     logout: () => { void logout() },
@@ -89,7 +103,7 @@ function PrivyBridge({ children }: { children: ReactNode }) {
       }).extend(publicActions)
     },
     mode: 'privy',
-  }), [ready, authenticated, wallet, login, logout, exportWallet])
+  }), [settled, authenticated, wallet, login, logout, exportWallet])
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
@@ -100,7 +114,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     <PrivyProvider
       appId={PRIVY_APP_ID}
       config={{
-        loginMethods: ['email', 'google'],
+        loginMethods: ['email'],
         embeddedWallets: { ethereum: { createOnLogin: 'users-without-wallets' } },
         appearance: { theme: 'light', accentColor: '#141414' },
         defaultChain: arbitrum,
