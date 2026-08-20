@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useWallet } from './wallet'
 import Bike from './Bike'
-import { IconWallet, IconChart, IconDots } from './Icons'
+import { IconWallet, IconChart, IconDots, IconActivity } from './Icons'
 import NetworkPicker from './NetworkPicker'
 import { useCarryRates } from './hooks'
 import { IconTrend } from './Icons'
@@ -76,16 +76,16 @@ export default function App() {
     earn: <Earn />,
     bridge: <Bridge back={() => setScreen('home')} />,
     loop: <Loop />,
-    menu: <Menu go={setScreen} />,
+    menu: <Menu />,
   }
 
   const navItems: { id: Screen; label: string; icon: React.ReactNode }[] = [
     { id: 'home', label: 'Wallet', icon: <IconWallet /> },
     { id: 'loop', label: 'Carry', icon: <Bike width={26} /> },
     { id: 'earn', label: 'Posición', icon: <IconChart /> },
-    { id: 'menu', label: 'Más', icon: <IconDots /> },
+    { id: 'activity', label: 'Actividad', icon: <IconActivity /> },
   ]
-  const active = ['send','bridge','receive','activity'].includes(screen) ? 'home' : screen
+  const active = ['send','bridge','receive'].includes(screen) ? 'home' : screen
 
   return (
     <div className="phone">
@@ -94,6 +94,7 @@ export default function App() {
         <div className="topbar-right">
           <ApyPill />
           <NetworkPicker />
+          <button className="more-btn" onClick={() => setScreen('menu')} aria-label="Más"><IconDots /></button>
         </div>
       </div>
       {S[screen]}

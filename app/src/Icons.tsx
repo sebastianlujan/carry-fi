@@ -41,3 +41,6 @@ export const Chevron = ({ w = 18 }: { w?: number }) => (
 export const IconTrend = ({ w = 14 }: { w?: number }) => (
   <svg width={w} height={w} viewBox="0 0 24 24" {...S}><path d="M4 16l5-5 4 3 7-8" /></svg>
 )
+export const IconActivity = ({ w = 20 }: { w?: number }) => (
+  <svg width={w} height={w} viewBox="0 0 24 24" {...S}><path d="M4 6h12M4 12h16M4 18h9" /><path d="M20 7l-2 2-1-1" /></svg>
+)
