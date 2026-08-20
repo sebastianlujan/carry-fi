@@ -1,80 +1,83 @@
-# Carry — pesos que rinden
+# Carry — pesos that earn
 
-**Wallet non-custodial estilo Payy para ARGt (Twin Stablecoins) con el carry trade del peso
-como producto: rendimiento real de Morpho, bridge LayerZero, y un loop apalancado atómico
-vía flash loans.**
+**A non-custodial, Payy-style wallet for ARGt (Twin Stablecoins) with the Argentine peso
+carry trade as the product: real Morpho yield, LayerZero bridging, and an atomic leveraged
+loop built on flash loans.**
 
 🟢 **Live**: https://carry-predictumx.vercel.app
-📱 Mobile-first — abrilo desde el teléfono.
+🚲 Logo: *la bicicleta* — "la bicicleta financiera" is the lifelong Argentine name for
+exactly this trade.
+📱 Mobile-first — open it on your phone.
 
 ---
 
-## Qué es
+## What it is
 
-El argentino tiene pesos que se derriten. Del otro lado hay gente que paga **16% anual** por
-pedirlos prestados contra colateral en dólares (para shortearlos). Carry pone al usuario del
-lado que cobra — en una UI de wallet, no de DeFi:
+Argentines hold pesos that melt. On the other side, people pay **16% APY** to borrow those
+pesos against dollar collateral (to short them). Carry puts the user on the side that
+collects — in a wallet UI, not a DeFi dashboard:
 
-- **Wallet** — balance ARGt agregado en Arbitrum + Base + Polygon, enviar en 2 pasos.
-- **Earn** — vault **ARGt Prime** (ERC-4626/Morpho Vault V2) con el share price y la tasa
-  del carry en vivo. *Milestone 2 ✓*
-- **Bridge** — LayerZero V2 OFT entre las 3 chains, quote de fee en vivo, manejo del dust
-  de 6 decimales. *Milestone 3 ✓*
-- **Loop** — leverage del carry: flash loan USDC → swap → depósito en vault → shares como
-  colateral en Morpho **a nombre del usuario** → deuda USDC repaga el flash. Una tx para
-  entrar, una para salir. Detrás de un umbral explícito de riesgo con consecuencias a la vista.
+- **Wallet** — aggregated ARGt balance across Arbitrum + Base + Polygon, 2-step send.
+- **Earn** — the **ARGt Prime** vault (ERC-4626 / Morpho Vault V2) with live share price
+  and the live carry rate. *Milestone 2 ✓*
+- **Bridge** — LayerZero V2 OFT across the 3 chains, live fee quotes, 6-decimal dust
+  handling. *Milestone 3 ✓*
+- **Loop** — leveraged carry: flash-loan USDC → swap → deposit into the vault → shares
+  posted as Morpho collateral **owned by the user** → USDC debt repays the flash. One
+  transaction in, one out. Gated behind an explicit risk threshold with consequences
+  spelled out before signing.
 
-## Non-custodial en serio
+## Non-custodial, for real
 
-- Privy embedded wallets (llaves en el device, MPC) — con fallback burner local.
-- **Cero backend**: la app es un build estático; todo pasa browser ↔ chain.
-- La posición del loop y del vault quedan **a nombre del usuario** on-chain: si Carry
-  desaparece, se sale por Morpho y el vault directo.
+- Privy embedded wallets (keys on-device, MPC) — with a local burner fallback.
+- **Zero backend**: the app is a static build; everything happens browser ↔ chain.
+- The loop and vault positions live **under the user's own address** on-chain: if Carry
+  disappears, you exit through Morpho and the vault directly.
 
-## La honestidad como feature
+## Honesty as a feature
 
-Todos los números de la UI salen de lecturas on-chain en vivo (tasas del IRM, share price,
-utilización). El loop hoy **no es ejecutable en mainnet** y la UI lo dice con el motivo
-exacto: no existe liquidez DEX ARGt/USDC en ningún venue de Arbitrum (verificado). La
-máquina completa está probada en fork contra los contratos reales.
+Every number in the UI comes from live on-chain reads (IRM rates, share price,
+utilization). The loop is currently **not executable on mainnet** and the UI says so with
+the exact reason: there is no ARGt/USDC DEX liquidity on any Arbitrum venue (verified).
+The full machine is proven in fork tests against the real contracts.
 
-## Correr
+## Run it
 
 ```bash
 ./init.sh                      # bootstrap (foundry + pnpm)
-cd contracts && forge test --fork-url https://arb1.arbitrum.io/rpc -vv   # 10 tests, fork real
-cd app && pnpm dev             # completar VITE_PRIVY_APP_ID en app/.env (o queda en modo burner)
+cd contracts && forge test --fork-url https://arb1.arbitrum.io/rpc -vv   # 10 tests on a real fork
+cd app && pnpm dev             # set VITE_PRIVY_APP_ID in app/.env (otherwise burner mode)
 ```
 
-## Contratos (`contracts/`)
+## Contracts (`contracts/`)
 
-| Contrato | Qué hace |
+| Contract | What it does |
 |---|---|
-| `CarryLoop.sol` | leverage/deleverage atómico vía `Morpho.flashLoan` (fee 0). Posición a nombre del user; performance fee sólo sobre ganancia, tope inmutable 20% |
-| `SArgtOracle.sol` | precio sARGt/USDC componiendo el feed real de Twin × `convertToAssets` del vault |
-| `swappers/` | `ISwapper` pluggable: `UniV3Swapper` (producción) + `SeededSwapper` (fork, la pata de liquidez que aún no existe) |
-| `script/DeployLoop.s.sol` | deploy real en Arbitrum: oracle + `createMarket(sARGt/USDC, LLTV 77%)` — permissionless, sólo gas |
+| `CarryLoop.sol` | atomic leverage/deleverage via `Morpho.flashLoan` (fee 0). Position owned by the user; performance fee only on profit, immutable 20% cap |
+| `SArgtOracle.sol` | sARGt/USDC price composing Twin's real feed × the vault's `convertToAssets` |
+| `swappers/` | pluggable `ISwapper`: `UniV3Swapper` (production) + `SeededSwapper` (fork — the liquidity leg that doesn't exist yet) |
+| `script/DeployLoop.s.sol` | real Arbitrum deploy: oracle + `createMarket(sARGt/USDC, 77% LLTV)` — permissionless, gas only |
 
-**Tests (fork Arbitrum, 10/10):** loop e2e con k=2 (salud 1.54 → intereses reales 7 días →
-cierre total), fee sobre profit, guards (`VaultIlliquid`, autorización), milestone 2
-(deposit/redeem del vault + la prueba de que `maxDeposit()==0` miente), milestone 3
-(quote/send del bridge + dust flooring).
+**Tests (Arbitrum fork, 10/10):** end-to-end loop at k=2 (health 1.54 → 7 days of real
+interest → full close), fee-on-profit math, guards (`VaultIlliquid`, authorization),
+milestone 2 (vault deposit/redeem plus proof that `maxDeposit()==0` lies), milestone 3
+(bridge quote/send plus dust flooring).
 
-## Hallazgos del research on-chain (20/8/2026)
+## On-chain research findings (Aug 20, 2026)
 
-1. El vault ARGt Prime es **Morpho Vault V2** síncrono sin whitelist — pero sus `max*()`
-   devuelven **0 siempre**: validar con ellos rompe el 100% de las operaciones.
-2. El "bridge de Twin" es un **LayerZero V2 OFT Adapter** estándar (peers verificados).
-3. ARGt **no tiene permit** (EIP-2612) — por eso el router.
-4. El market del loop (colateral sARGt → deuda USDC) **no existía: lo creamos** —
-   `createMarket` es permissionless.
-5. La tasa del carry es real: **supply 13,4% / borrow 16,1%** (util 83%) en el market
-   ARGt/USDC de Morpho — leída en vivo por la app.
+1. The ARGt Prime vault is a synchronous, ungated **Morpho Vault V2** — but its `max*()`
+   functions **always return 0**: validating with them breaks 100% of operations.
+2. Twin's "bridge" is a standard **LayerZero V2 OFT Adapter** (peers verified).
+3. ARGt has **no permit** (EIP-2612) — hence the router.
+4. The loop's market (sARGt collateral → USDC debt) **did not exist: we create it** —
+   `createMarket` is permissionless.
+5. The carry is real: **13.4% supply / 16.1% borrow** (83% utilization) on Morpho's
+   ARGt/USDC market — read live by the app.
 
 ## Stack
 
 TypeScript · React 19 · Vite · viem · Privy · TanStack Query · Foundry · Solidity 0.8.28
 
-## Direcciones (Arbitrum)
+## Addresses (Arbitrum)
 
-Ver `AGENTS.md` — todas verificadas con `cast call` antes de usarse.
+See `AGENTS.md` — every address verified with `cast call` before use.
