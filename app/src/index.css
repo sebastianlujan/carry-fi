@@ -207,3 +207,11 @@ input, select { font-family: inherit; color: inherit; }
 .pill.apy { padding: 6px 10px; font-size: 11px; gap: 5px; }
 .pill.apy b { padding: 2px 7px; font-size: 10.5px; }
 @media (max-width: 380px) { .pill.apy { display: none; } }
+
+/* ── gráfica de Posición (lima, trazo negro) ──────────────── */
+.earn-chart { background: var(--lime); border: 1.5px solid var(--ink); border-radius: 20px; padding: 14px 14px 10px; margin-top: 14px; }
+.earn-range { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.earn-range button { font-size: 12px; font-weight: 800; letter-spacing: .05em; color: var(--ink-dim); padding: 5px 11px; border-radius: 999px; }
+.earn-range button.on { background: var(--ink); color: var(--lime); }
+.earn-range .rate { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--ink-dim); }
+.earn-note { font-size: 12px; font-weight: 600; color: var(--ink-dim); margin-top: 8px; }

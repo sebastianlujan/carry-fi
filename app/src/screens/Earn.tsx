@@ -8,6 +8,7 @@ import { VAULT_ARGT_PRIME, CHAINS, ARBITRUM_ID } from '../chain/registry'
 import { vaultAbi } from '../chain/abis'
 import { fmtArgt, parseArgt, fmtPct } from '../chain/format'
 import { runTx, ensureAllowance, errMsg } from '../tx'
+import EarnChart from '../EarnChart'
 import { addBaseline } from '../chain/baseline'
 
 export default function Earn() {
@@ -68,6 +69,8 @@ export default function Earn() {
         <div className="row"><span className="k">Utilización del market</span>
           <span className="v">{rates ? `${(rates.utilization * 100).toFixed(0)}%` : '…'}</span></div>
       </div>
+
+      <EarnChart baseArgt={pos?.argtValue ?? 0n} carryApy={rates?.supplyApy ?? 0} />
 
       <div className="seg">
         <button className={mode === 'depositar' ? 'on' : ''} onClick={() => setMode('depositar')}>Depositar</button>
