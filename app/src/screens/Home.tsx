@@ -71,6 +71,7 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
       <div className="balance" style={{ fontSize: 'clamp(44px,12vw,60px)' }}>
         <span className="cur">$</span>{fmtMoney(total)}
       </div>
+      <NetworkPicker />
 
       <div className="pos-card">
         <h3>Tu posición activa</h3>
