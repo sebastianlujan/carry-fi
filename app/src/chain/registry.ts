@@ -76,3 +76,21 @@ export const EXTRA_TOKENS: { symbol: string; name: string; address: Address }[] 
   { symbol: 'BRAt', name: 'Brazilian Real token', address: '0xC4ed6Aba5373D78E160F4df39e011F078Be54df8' },
   { symbol: 'PERt', name: 'Peruvian Sol token', address: '0x899438713f62B04d6CD8e8709986F7256fB6E3d9' },
 ]
+
+// Tokens transaccionables (Enviar). Todas 18 dec. Direcciones verificadas on-chain en las
+// 3 chains — OJO: la tabla de las capturas tenía la de BRAt/Polygon mal (mostraba la de ARGt).
+export interface Token { symbol: string; name: string; byChain: Partial<Record<ChainId, Address>> }
+export const TOKENS: Token[] = [
+  {
+    symbol: 'ARGt', name: 'Argentine Peso token',
+    byChain: { [ARBITRUM_ID]: CHAINS[ARBITRUM_ID].argt, [BASE_ID]: CHAINS[BASE_ID].argt, [POLYGON_ID]: CHAINS[POLYGON_ID].argt },
+  },
+  {
+    symbol: 'BRAt', name: 'Brazilian Real token',
+    byChain: {
+      [ARBITRUM_ID]: '0xC4ed6Aba5373D78E160F4df39e011F078Be54df8',
+      [BASE_ID]: '0xFEE29845569570F8e0119291dff77B7b93283aaB',
+      [POLYGON_ID]: '0x59863989d080B22476DB95656d0C3CC18be92214',
+    },
+  },
+]
