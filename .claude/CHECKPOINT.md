@@ -1,6 +1,6 @@
 # CHECKPOINT — CarryFi
 
-> Última actualización: 20/8/2026 ~20:10. **Submission ENVIADA antes de las 18:00** ✓
+> Última actualización: 20/8/2026 ~20:30. **Submission ENVIADA antes de las 18:00** ✓
 
 ## Estado: SHIPPED 🚲 — todos los milestones + bonus verdes
 
@@ -20,11 +20,12 @@
   se pudo verificar (no shippeamos address sin verificar).
 
 ## Features en prod
+Nav: Wallet · Carry · Posición · **Actividad**. Más (ajustes) en botón ••• del header.
 Wallet (balance 3 redes, selector de red pill+menú) · Enviar multi-token · Recibir con QR
 (negro sobre blanco) + dirección completa · **Earn: Market directo a Morpho 13,4% real
 (default) + Vault M2** con gráfica de proyección lima/negro · Bridge con quote live · Loop
 "La bicicleta" gateado honesto (corre en fork) · Actividad on-chain real (getLogs, sin mock)
-· Más (wallet, actividad, seguridad, contratos).
+· Más (wallet, seguridad, contratos, logout).
 
 ## Próximos pasos (si el proyecto sigue)
 - [ ] **Loop real en mainnet**: (1) crear+seedear pool Uniswap ARGt/USDC (~$100 capital, EL
