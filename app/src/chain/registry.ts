@@ -60,10 +60,19 @@ export const MORPHO: Address = '0x6c247b1F6182318877311737BaC0844bAa518F5e'
 export const IRM_ADAPTIVE_CURVE: Address = '0x66F30587FB8D4206918deb78ecA7d5eBbafD06DA'
 export const ORACLE_ARGT_USDC: Address = '0xc67F9A01554Dcc0AB415D267b3B3252eEB03aC4F' // 1e48
 export const USDC_ARBITRUM: Address = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831'
+export const ARGT_ARBITRUM_ADDR: Address = '0x59863989d080B22476DB95656d0C3CC18be92214'
 export const LLTV_77 = 770000000000000000n // 0.77e18
 
-// market de referencia existente (colateral USDC → presta ARGt) para leer la tasa del carry
+// market ARGt/USDC de Morpho Blue: suplís ARGt (loan token) y ganás el carry (13,4%).
+// Params verificados on-chain vía idToMarketParams el 20/8/2026.
 export const MARKET_ARGT_USDC_ID = '0xccc7e92a5331c8bb1a1639b8f2afd0521095768e30a9c82d102574ca97bc32be' as const
+export const MARKET_ARGT_USDC = {
+  loanToken: ARGT_ARBITRUM_ADDR,
+  collateralToken: USDC_ARBITRUM,
+  oracle: ORACLE_ARGT_USDC,
+  irm: IRM_ADAPTIVE_CURVE,
+  lltv: LLTV_77,
+} as const
 
 // contratos nuestros (post-deploy; vacíos ⇒ la UI gatea el Loop con el motivo)
 export const CARRY_LOOP = (import.meta.env.VITE_CARRY_LOOP ?? '') as Address | ''

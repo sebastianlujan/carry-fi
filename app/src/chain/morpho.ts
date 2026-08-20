@@ -1,6 +1,7 @@
 // Tasas reales del carry: market ARGt/USDC existente en Morpho Blue (Arbitrum).
 import { clientFor } from './clients'
 import { morphoAbi, irmAbi } from './abis'
+import type { Address } from 'viem'
 import { MORPHO, IRM_ADAPTIVE_CURVE, MARKET_ARGT_USDC_ID, ARBITRUM_ID } from './registry'
 
 const SECONDS_PER_YEAR = 31_536_000
@@ -34,4 +35,22 @@ export async function marketRates(marketId: `0x${string}` = MARKET_ARGT_USDC_ID)
 export async function marketExists(marketId: `0x${string}`): Promise<boolean> {
   const m = await clientFor(ARBITRUM_ID).readContract({ address: MORPHO, abi: morphoAbi, functionName: 'market', args: [marketId] })
   return m[4] > 0n // lastUpdate > 0
+}
+
+// Virtual shares de Morpho (trampa #5): assets = shares·(totalAssets+1)/(totalShares+1e6).
+const VIRTUAL_SHARES = 1_000_000n
+const VIRTUAL_ASSETS = 1n
+
+// Posición de SUPPLY del user en el market ARGt/USDC: cuánto ARGt tiene puesto a rendir.
+export async function marketSupplyPosition(user: Address): Promise<{ shares: bigint; argt: bigint }> {
+  const arb = clientFor(ARBITRUM_ID)
+  const [pos, m] = await Promise.all([
+    arb.readContract({ address: MORPHO, abi: morphoAbi, functionName: 'position', args: [MARKET_ARGT_USDC_ID, user] }),
+    arb.readContract({ address: MORPHO, abi: morphoAbi, functionName: 'market', args: [MARKET_ARGT_USDC_ID] }),
+  ])
+  const shares = pos[0] // supplyShares
+  const totalAssets = m[0]
+  const totalShares = m[1]
+  const argt = shares === 0n ? 0n : (shares * (totalAssets + VIRTUAL_ASSETS)) / (totalShares + VIRTUAL_SHARES)
+  return { shares, argt }
 }

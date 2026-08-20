@@ -26,6 +26,15 @@ export const morphoAbi = [
   { type: 'function', name: 'idToMarketParams', stateMutability: 'view', inputs: [{ name: 'id', type: 'bytes32' }], outputs: [
     { name: 'loanToken', type: 'address' }, { name: 'collateralToken', type: 'address' },
     { name: 'oracle', type: 'address' }, { name: 'irm', type: 'address' }, { name: 'lltv', type: 'uint256' }] },
+  { type: 'function', name: 'supply', stateMutability: 'nonpayable', inputs: [
+    { name: 'marketParams', type: 'tuple', components: [{ name: 'loanToken', type: 'address' }, { name: 'collateralToken', type: 'address' }, { name: 'oracle', type: 'address' }, { name: 'irm', type: 'address' }, { name: 'lltv', type: 'uint256' }] },
+    { name: 'assets', type: 'uint256' }, { name: 'shares', type: 'uint256' }, { name: 'onBehalf', type: 'address' }, { name: 'data', type: 'bytes' }],
+    outputs: [{ type: 'uint256' }, { type: 'uint256' }] },
+  { type: 'function', name: 'withdraw', stateMutability: 'nonpayable', inputs: [
+    { name: 'marketParams', type: 'tuple', components: [{ name: 'loanToken', type: 'address' }, { name: 'collateralToken', type: 'address' }, { name: 'oracle', type: 'address' }, { name: 'irm', type: 'address' }, { name: 'lltv', type: 'uint256' }] },
+    { name: 'assets', type: 'uint256' }, { name: 'shares', type: 'uint256' }, { name: 'onBehalf', type: 'address' }, { name: 'receiver', type: 'address' }],
+    outputs: [{ type: 'uint256' }, { type: 'uint256' }] },
+  { type: 'function', name: 'accrueInterest', stateMutability: 'nonpayable', inputs: [{ name: 'marketParams', type: 'tuple', components: [{ name: 'loanToken', type: 'address' }, { name: 'collateralToken', type: 'address' }, { name: 'oracle', type: 'address' }, { name: 'irm', type: 'address' }, { name: 'lltv', type: 'uint256' }] }], outputs: [] },
   { type: 'function', name: 'setAuthorization', stateMutability: 'nonpayable', inputs: [{ name: 'authorized', type: 'address' }, { name: 'newIsAuthorized', type: 'bool' }], outputs: [] },
   { type: 'function', name: 'isAuthorized', stateMutability: 'view', inputs: [{ name: 'authorizer', type: 'address' }, { name: 'authorized', type: 'address' }], outputs: [{ type: 'bool' }] },
 ] as const

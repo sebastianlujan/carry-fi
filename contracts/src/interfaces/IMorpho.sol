@@ -30,6 +30,8 @@ interface IMorpho {
         external returns (uint256, uint256);
     function supplyCollateral(MarketParams memory, uint256 assets, address onBehalf, bytes memory data) external;
     function withdrawCollateral(MarketParams memory, uint256 assets, address onBehalf, address receiver) external;
+    function withdraw(MarketParams memory, uint256 assets, uint256 shares, address onBehalf, address receiver)
+        external returns (uint256, uint256);
     function borrow(MarketParams memory, uint256 assets, uint256 shares, address onBehalf, address receiver)
         external returns (uint256, uint256);
     function repay(MarketParams memory, uint256 assets, uint256 shares, address onBehalf, bytes memory data)
