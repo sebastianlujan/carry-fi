@@ -114,7 +114,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     <PrivyProvider
       appId={PRIVY_APP_ID}
       config={{
-        loginMethods: ['email', 'google'],
+        loginMethods: ['google'],
         embeddedWallets: { ethereum: { createOnLogin: 'users-without-wallets' } },
         appearance: { theme: 'light', accentColor: '#141414' },
         defaultChain: arbitrum,
