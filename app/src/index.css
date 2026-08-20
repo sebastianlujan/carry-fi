@@ -217,3 +217,19 @@ input, select { font-family: inherit; color: inherit; }
 .earn-range button.on { background: var(--ink); color: var(--lime); }
 .earn-range .rate { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--ink-dim); }
 .earn-note { font-size: 12px; font-weight: 600; color: var(--ink-dim); margin-top: 8px; }
+
+/* ── actividad ────────────────────────────────────────────── */
+.act-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid rgba(20,20,20,.06); text-decoration: none; color: inherit; }
+.act-row:first-of-type { border-top: none; }
+.act-ic { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; flex-shrink: 0; }
+.act-ic.in { background: var(--ink); color: var(--lime); }
+.act-ic.out { background: rgba(20,20,20,.08); color: var(--ink); }
+.act-body { flex: 1; min-width: 0; }
+.act-body b { font-size: 15px; font-weight: 800; display: block; }
+.act-body span { font-size: 12.5px; font-weight: 600; color: var(--ink-dim); }
+.act-amt { font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+.act-amt.in { color: var(--ok); }
+
+.act-link { display: block; width: 100%; text-align: center; margin-top: 12px; padding: 12px;
+  font-size: 13.5px; font-weight: 800; letter-spacing: .04em; color: var(--ink-dim); }
+.act-link:active { color: var(--ink); }

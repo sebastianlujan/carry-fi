@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { useWallet } from '../wallet'
 import { CHAINS, ARBITRUM_ID, VAULT_ARGT_PRIME, MORPHO, CARRY_LOOP } from '../chain/registry'
 import { shortAddr } from '../chain/format'
-import { IconShield, IconKey, IconCode, IconCopy, IconLogout, Chevron, IconWallet } from '../Icons'
+import { IconShield, IconKey, IconCode, IconCopy, IconLogout, Chevron, IconWallet, IconChart } from '../Icons'
+import type { Screen } from '../App'
 
-export default function Menu() {
+export default function Menu({ go }: { go: (s: Screen) => void }) {
   const { address, logout, exportKey, mode } = useWallet()
   const [copied, setCopied] = useState(false)
   const [open, setOpen] = useState<'' | 'how' | 'tech'>('')
@@ -49,6 +50,15 @@ export default function Menu() {
         </div>
         <button className="chip" onClick={copy}><IconCopy /> {copied ? 'Copiada ✓' : 'Copiar'}</button>
       </div>
+
+      <button className="wcard" onClick={() => go('activity')}>
+        <div className="icircle"><IconChart /></div>
+        <div className="body">
+          <b>Actividad</b>
+          <span>Tus movimientos de ARGt on-chain.</span>
+        </div>
+        <span className="chev"><Chevron /></span>
+      </button>
 
       <button className="wcard" onClick={() => { if (exportKey) exportKey() }}>
         <div className="icircle"><IconKey /></div>

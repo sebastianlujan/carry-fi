@@ -12,8 +12,9 @@ import Bridge from './screens/Bridge'
 import Loop from './screens/Loop'
 import Menu from './screens/Menu'
 import Receive from './screens/Receive'
+import Activity from './screens/Activity'
 
-export type Screen = 'home' | 'send' | 'receive' | 'earn' | 'bridge' | 'loop' | 'menu'
+export type Screen = 'home' | 'send' | 'receive' | 'earn' | 'bridge' | 'loop' | 'menu' | 'activity'
 
 function Wordmark() {
   return (
@@ -71,10 +72,11 @@ export default function App() {
     home: <Home go={setScreen} />,
     send: <Send back={() => setScreen('home')} />,
     receive: <Receive back={() => setScreen('home')} />,
+    activity: <Activity back={() => setScreen('home')} />,
     earn: <Earn />,
     bridge: <Bridge back={() => setScreen('home')} />,
     loop: <Loop />,
-    menu: <Menu />,
+    menu: <Menu go={setScreen} />,
   }
 
   const navItems: { id: Screen; label: string; icon: React.ReactNode }[] = [
@@ -83,7 +85,7 @@ export default function App() {
     { id: 'earn', label: 'Posición', icon: <IconChart /> },
     { id: 'menu', label: 'Más', icon: <IconDots /> },
   ]
-  const active = screen === 'send' || screen === 'bridge' || screen === 'receive' ? 'home' : screen
+  const active = ['send','bridge','receive','activity'].includes(screen) ? 'home' : screen
 
   return (
     <div className="phone">

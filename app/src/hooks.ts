@@ -4,6 +4,7 @@ import { allBalances } from './chain/bridge'
 import { sharePrice, vaultPosition, vaultRealizedApy } from './chain/vault'
 import { marketRates } from './chain/morpho'
 import { loopPosition, loopChecks } from './chain/loop'
+import { fetchActivity } from './chain/activity'
 
 export function useBalances(address: Address | null) {
   return useQuery({
@@ -46,4 +47,13 @@ export function useLoopPosition(address: Address | null) {
 
 export function useLoopChecks() {
   return useQuery({ queryKey: ['loopChecks'], queryFn: loopChecks, refetchInterval: 60_000 })
+}
+
+export function useActivity(address: Address | null) {
+  return useQuery({
+    queryKey: ['activity', address],
+    queryFn: () => fetchActivity(address as Address),
+    enabled: !!address,
+    refetchInterval: 30_000,
+  })
 }

@@ -97,6 +97,16 @@ function PrivyBridge({ children }: { children: ReactNode }) {
       if (!wallet) throw new Error('sin wallet')
       await wallet.switchChain(chainId)
       const provider = await wallet.getEthereumProvider()
+      // esperar a que el provider REALMENTE esté en la chain destino antes de firmar
+      // (switchChain no propaga sincrónico → error "current chain does not match target")
+      for (let i = 0; i < 25; i++) {
+        try {
+          const hex = (await provider.request({ method: 'eth_chainId' })) as string
+          if (parseInt(hex, 16) === chainId) break
+        } catch { /* reintenta */ }
+        if (i === 24) throw new Error(`No pude cambiar a ${VIEM_CHAINS[chainId].name}. Reintentá.`)
+        await new Promise((r) => setTimeout(r, 150))
+      }
       const chain: Chain = VIEM_CHAINS[chainId]
       return createWalletClient({
         account: wallet.address as Address, chain, transport: custom(provider),
