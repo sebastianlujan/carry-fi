@@ -99,7 +99,7 @@ export default function Loop() {
           <div className="row"><span className="k">LLTV del market</span><span className="v">{(LLTV * 100).toFixed(0)}%</span></div>
           <div className="row"><span className="k">Tasa de la deuda (live)</span><span className="v">{fmtPct(borrowApy * 100)}</span></div>
         </div>
-        <div className="banner">La posición está a TU nombre en Morpho. Si Carry desaparece, salís por Morpho directo — eso es non-custodial.</div>
+        <div className="banner">Posición a tu nombre en Morpho: podés salir directo, sin CarryFi.</div>
         {err && <div className="status err">{err}</div>}
         {msg && !err && <div className="status">{msg}</div>}
         <div className="actions">
@@ -117,28 +117,25 @@ export default function Loop() {
       <div className="screen">
         <div style={{ marginTop: 18 }}><Bike width={92} spin /></div>
         <div className="title" style={{ marginTop: 8 }}>La bicicleta</div>
-        <div className="sub">El loop del carry — la bicicleta financiera de toda la vida, on-chain y a tu nombre. Leé esto antes: no es una caja de ahorro.</div>
+        <div className="sub">El loop del carry, on-chain y a tu nombre. No es una caja de ahorro.</div>
 
         <div className="card">
           <h3>Cómo funciona</h3>
           <div style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.55 }}>
-            Un flash loan de USDC compra ARGt, todo entra al vault ARGt Prime, las shares quedan
-            como colateral en Morpho <b>a tu nombre</b> y la deuda en USDC paga el flash.
+            Flash loan → vault → colateral <b>a tu nombre</b> → deuda en USDC.
             Una transacción para entrar, una para salir.
           </div>
         </div>
         <div className="card">
           <h3>El riesgo, sin vueltas</h3>
           <div style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.55 }}>
-            Tu deuda queda en dólares y tu colateral en pesos. <b>Si el peso se devalúa más de
-            ~{(liquidationDrop(2) * 100).toFixed(0)}% (a k=2), te liquidan</b> y perdés parte del colateral.
-            Twin, Morpho y el vault cobran su parte sin riesgo cambiario: el único que duerme
-            con el riesgo del peso puesto sos vos — por eso el rendimiento es tuyo.
+            Deuda en dólares, colateral en pesos. <b>Si el peso cae ~{(liquidationDrop(2) * 100).toFixed(0)}%
+            (a k=2), te liquidan.</b> El rendimiento es tuyo porque el riesgo también.
           </div>
         </div>
         {checks && !executable && (
           <div className="banner warn">
-            <b>Hoy el loop no es ejecutable en mainnet:</b> {checks.reason}
+            <b>Hoy no ejecutable en mainnet:</b> falta liquidez DEX ARGt/USDC. La máquina está probada en fork.
           </div>
         )}
         <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginTop: 14, fontSize: 14, fontWeight: 700 }}>
@@ -211,9 +208,8 @@ export default function Loop() {
         <div className="row"><span className="k">APY neto estimado (live)</span><span className="v">{fmtPct(net * 100, 1)}</span></div>
       </div>
       <div className="banner">
-        Vas a firmar hasta 3 transacciones: autorizar el router en Morpho (una única vez),
-        aprobar ARGt, y el loop en sí (flash → swap → depósito → colateral → deuda, atómico).
-        El colateral y la deuda quedan a tu nombre.
+        Hasta 3 firmas: autorizar el router (una vez), aprobar ARGt, y el loop atómico.
+        Todo queda a tu nombre.
       </div>
       {!executable && (
         <div className="banner err"><b>Ejecución deshabilitada:</b> {checks?.reason ?? 'infraestructura incompleta.'}</div>

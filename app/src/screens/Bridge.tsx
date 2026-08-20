@@ -10,12 +10,14 @@ import { oftAbi } from '../chain/abis'
 import { floorToShared, sendParam, quoteBridge } from '../chain/bridge'
 import { fmtArgt, parseArgt } from '../chain/format'
 import { runTx, ensureAllowance, errMsg } from '../tx'
+import { useNetwork } from '../network'
 
 export default function Bridge({ back }: { back: () => void }) {
   const { address, getSigner } = useWallet()
   const { data: balances, refetch } = useBalances(address)
-  const [src, setSrc] = useState<ChainId>(ARBITRUM_ID)
-  const [dst, setDst] = useState<ChainId>(BASE_ID)
+  const { sel } = useNetwork()
+  const [src, setSrc] = useState<ChainId>(sel === 0 ? ARBITRUM_ID : sel)
+  const [dst, setDst] = useState<ChainId>(sel === BASE_ID ? ARBITRUM_ID : BASE_ID)
   const [amountStr, setAmountStr] = useState('')
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState(''); const [err, setErr] = useState(''); const [done, setDone] = useState('')

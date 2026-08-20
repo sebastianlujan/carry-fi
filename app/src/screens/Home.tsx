@@ -8,6 +8,8 @@ import { clientFor } from '../chain/clients'
 import { argtToUsdc } from '../chain/loop'
 import { getBaseline } from '../chain/baseline'
 import { IconShield, Chevron } from '../Icons'
+import NetworkPicker from '../NetworkPicker'
+import { useNetwork } from '../network'
 import type { Screen } from '../App'
 
 export default function Home({ go }: { go: (s: Screen) => void }) {
@@ -15,11 +17,14 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
   const { data: balances } = useBalances(address)
   const { data: vault } = useVaultPosition(address)
   const { data: loop } = useLoopPosition(address)
+  const { sel } = useNetwork()
 
-  const walletArgt = balances ? CHAIN_IDS.reduce((a, id) => a + balances[id], 0n) : 0n
-  const vaultArgt = vault?.argtValue ?? 0n
-  const loopArgt = loop?.collateralArgt ?? 0n
-  const debtUsdc = loop?.debtUsdc ?? 0n
+  const chainIds = sel === 0 ? CHAIN_IDS : [sel]
+  const includeArb = sel === 0 || sel === 42161
+  const walletArgt = balances ? chainIds.reduce((a, id) => a + balances[id], 0n) : 0n
+  const vaultArgt = includeArb ? (vault?.argtValue ?? 0n) : 0n
+  const loopArgt = includeArb ? (loop?.collateralArgt ?? 0n) : 0n
+  const debtUsdc = includeArb ? (loop?.debtUsdc ?? 0n) : 0n
 
   const { data: debtArgt } = useQuery({
     queryKey: ['debtArgt', debtUsdc.toString()],
@@ -62,7 +67,10 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
         <p>{pedaleando ? 'Tu Carrybike está pedaleando.' : 'Tu Carrybike está lista para pedalear.'}</p>
       </div>
 
-      <div className="balance-label" style={{ marginTop: 18 }}>Total en pesos</div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 18 }}>
+        <div className="balance-label" style={{ marginTop: 0 }}>Total en pesos</div>
+        <NetworkPicker balances={balances} />
+      </div>
       <div className="balance" style={{ fontSize: 'clamp(44px,12vw,60px)' }}>
         <span className="cur">$</span>{fmtMoney(total)}
       </div>
@@ -101,7 +109,7 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
         <h3>Mis tokens</h3>
         <div className="trow">
           <div className="l"><b>ARGt</b><span>Argentine Peso token</span></div>
-          <div className="r"><b>{fmtArgt(walletArgt)}</b><span>en {CHAIN_IDS.filter((id) => (balances?.[id] ?? 0n) > 0n).length || 3} redes</span></div>
+          <div className="r"><b>{fmtArgt(walletArgt)}</b><span>{sel === 0 ? `en ${CHAIN_IDS.filter((id) => (balances?.[id] ?? 0n) > 0n).length || 3} redes` : CHAINS[sel].name}</span></div>
         </div>
         {EXTRA_TOKENS.map((t, i) => (
           <div className="trow" key={t.symbol}>
@@ -117,7 +125,7 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
         )}
       </div>
 
-      {balances && walletArgt > 0n && (
+      {balances && walletArgt > 0n && sel === 0 && (
         <div className="card" style={{ background: '#fff' }}>
           <h3>Por red</h3>
           {CHAIN_IDS.map((id) => (

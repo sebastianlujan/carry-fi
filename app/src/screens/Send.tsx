@@ -6,13 +6,15 @@ import { CHAINS, CHAIN_IDS, type ChainId, ARBITRUM_ID } from '../chain/registry'
 import { erc20Abi } from '../chain/abis'
 import { fmtArgt, parseArgt } from '../chain/format'
 import { runTx, errMsg } from '../tx'
+import { useNetwork } from '../network'
 
 type Step = 'form' | 'confirm' | 'done'
 
 export default function Send({ back }: { back: () => void }) {
   const { address, getSigner } = useWallet()
   const { data: balances, refetch } = useBalances(address)
-  const [chain, setChain] = useState<ChainId>(ARBITRUM_ID)
+  const { sel } = useNetwork()
+  const [chain, setChain] = useState<ChainId>(sel === 0 ? ARBITRUM_ID : sel)
   const [to, setTo] = useState('')
   const [amountStr, setAmountStr] = useState('')
   const [step, setStep] = useState<Step>('form')
