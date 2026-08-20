@@ -1,6 +1,6 @@
 # CHECKPOINT — CarryFi
 
-> Última actualización: 20/8/2026 ~18:20. **Submission ENVIADA antes de las 18:00** ✓
+> Última actualización: 20/8/2026 ~18:45. **Submission ENVIADA antes de las 18:00** ✓
 
 ## Estado: SHIPPED 🚲
 
@@ -10,9 +10,10 @@
 - 🟢 Login: **Privy con Google-only** (app id `cmt1zfaz…4gz6`; createWallet explícito
   post-auth porque el dashboard tiene create_on_login=off; email deshabilitado a pedido)
 - 🟢 Milestones: M1 ✓ (Privy + balance + enviar + recibir) · M2 ✓ (vault) · M3 ✓ (bridge)
-- 🟢 Home v3: gráfica de proyección (historia lima + peso estable/deval 15/deval 25 con
-  APY live), patrimonio en US$ neto de deuda, selector de red, MIS TOKENS (ARGt + BRAt/PERt
-  verificados con cast), verificada en teléfono por el usuario
+- 🟢 Home v4 (final): diseño card-based (saludo + posición activa + trust card) con
+  **MIS TOKENS** (ARGt agregado + BRAt/PERt verificados con cast + sARGt). La gráfica de
+  proyección v3 fue revertida a pedido del usuario (queda en git: commit 7aac42f si se
+  quiere recuperar). Verificado en teléfono.
 
 ## Bloques completados
 1. Research on-chain (tabla verificada + 6 trampas → AGENTS.md)
