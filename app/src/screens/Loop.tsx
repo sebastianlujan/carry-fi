@@ -10,6 +10,7 @@ import { netApy, healthAt, liquidationDrop, argtToUsdc, LLTV } from '../chain/lo
 import { clientFor } from '../chain/clients'
 import { fmtArgt, parseArgt, fmtPct } from '../chain/format'
 import { runTx, ensureAllowance, errMsg } from '../tx'
+import Bike from '../Bike'
 
 type Stage = 'gate' | 'config' | 'confirm'
 
@@ -88,7 +89,8 @@ export default function Loop() {
     const h = pos.debtUsdc > 0n ? Number(pos.healthWad) / 1e18 : Infinity
     return (
       <div className="screen">
-        <div className="balance-label">Loop activo</div>
+        <div style={{ marginTop: 14 }}><Bike width={64} spin /></div>
+        <div className="balance-label">Pedaleando</div>
         <div className="balance"><span className="cur">$</span>{fmtArgt(pos.collateralArgt)}</div>
         <div className="sub">colateral sARGt en tu nombre · deuda {(Number(pos.debtUsdc) / 1e6).toFixed(2)} US$</div>
         <div className="card dark">
@@ -113,8 +115,9 @@ export default function Loop() {
   if (stage === 'gate') {
     return (
       <div className="screen">
-        <div className="title" style={{ marginTop: 14 }}>El loop</div>
-        <div className="sub">Apalancá el carry del peso. Leé esto antes: no es una caja de ahorro.</div>
+        <div style={{ marginTop: 18 }}><Bike width={92} spin /></div>
+        <div className="title" style={{ marginTop: 8 }}>La bicicleta</div>
+        <div className="sub">El loop del carry — la bicicleta financiera de toda la vida, on-chain y a tu nombre. Leé esto antes: no es una caja de ahorro.</div>
 
         <div className="card">
           <h3>Cómo funciona</h3>

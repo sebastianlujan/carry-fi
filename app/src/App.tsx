@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useWallet } from './wallet'
+import Bike from './Bike'
 import Home from './screens/Home'
 import Send from './screens/Send'
 import Earn from './screens/Earn'
@@ -12,9 +13,7 @@ export type Screen = 'home' | 'send' | 'earn' | 'bridge' | 'loop' | 'menu'
 function Wordmark() {
   return (
     <div className="wordmark">
-      <svg width="26" height="20" viewBox="0 0 26 20" fill="none" aria-hidden>
-        <path d="M2 18 10 2l4 8 4-8 6 16" stroke="#141414" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      <Bike width={34} />
       carry
     </div>
   )
