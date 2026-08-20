@@ -13,7 +13,7 @@ export default function NetworkPicker() {
     <div className="net-seg" role="tablist" aria-label="Red">
       {opts.map((o) => (
         <button key={o.v} role="tab" aria-selected={sel === o.v} className={sel === o.v ? 'on' : ''} onClick={() => setSel(o.v)}>
-          {o.l}
+          <i className="dot" />{o.l}
         </button>
       ))}
     </div>
