@@ -1,6 +1,6 @@
 # CHECKPOINT — CarryFi
 
-> Última actualización: 20/8/2026 ~19:00. **Submission ENVIADA antes de las 18:00** ✓
+> Última actualización: 20/8/2026 ~19:40. **Submission ENVIADA antes de las 18:00** ✓
 
 ## Estado: SHIPPED 🚲
 
@@ -16,6 +16,11 @@
   quiere recuperar). Verificado en teléfono.
 - 🟢 Recibir con **QR** (lib `qrcode`, tinta sobre lima, sin borde, payload = address pelada)
   + chip de dirección con copiar. Verificado en teléfono.
+- 🟢 **Selector de red** (Todas/Arbitrum/Base/Polygon): segmentado inline minimalista bajo
+  el balance, puntos monocromos en paleta (negro sobre lima; activa = pill negra con punto
+  lima). Persistido; filtra Home y es default de Enviar/Bridge. Verificado en teléfono.
+- 🟢 Direcciones en formato `0x1234…5678` en toda la UI · chips Copiar en tinta/lima
+- 🟢 Copy de Carry/Loop recortado a one-liners (preferencia del usuario: directo)
 
 ## Bloques completados
 1. Research on-chain (tabla verificada + 6 trampas → AGENTS.md)
