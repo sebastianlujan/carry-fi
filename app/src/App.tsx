@@ -3,6 +3,8 @@ import { useWallet } from './wallet'
 import Bike from './Bike'
 import { IconWallet, IconChart, IconDots } from './Icons'
 import NetworkPicker from './NetworkPicker'
+import { useCarryRates } from './hooks'
+import { IconTrend } from './Icons'
 import Home from './screens/Home'
 import Send from './screens/Send'
 import Earn from './screens/Earn'
@@ -22,6 +24,16 @@ function Wordmark() {
   )
 }
 
+
+function ApyPill() {
+  const { data } = useCarryRates()
+  const apy = data ? (data.supplyApy * 100).toFixed(1) : '…'
+  return (
+    <span className="pill apy" title="Supply APY live del market ARGt/USDC en Morpho">
+      CARRY <b>{apy}%</b> <IconTrend />
+    </span>
+  )
+}
 
 export default function App() {
   const { ready, address, login } = useWallet()
@@ -77,7 +89,10 @@ export default function App() {
     <div className="phone">
       <div className="topbar">
         <Wordmark />
-        <NetworkPicker />
+        <div className="topbar-right">
+          <ApyPill />
+          <NetworkPicker />
+        </div>
       </div>
       {S[screen]}
       <nav className="nav">

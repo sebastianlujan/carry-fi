@@ -199,3 +199,9 @@ input, select { font-family: inherit; color: inherit; }
 .net-menu button.on .dot { background: var(--lime); }
 .net-menu button:active { background: rgba(255,254,245,.06); }
 @keyframes pop { from { opacity: 0; transform: translateY(-4px) } }
+
+/* ── header: APY + red agrupados a la derecha ─────────────── */
+.topbar-right { display: flex; align-items: center; gap: 8px; }
+.pill.apy { padding: 6px 10px; font-size: 11px; gap: 5px; }
+.pill.apy b { padding: 2px 7px; font-size: 10.5px; }
+@media (max-width: 380px) { .pill.apy { display: none; } }
