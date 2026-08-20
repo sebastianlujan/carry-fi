@@ -1,44 +1,40 @@
 # CHECKPOINT — CarryFi
 
-> Última actualización: 20/8/2026 ~19:40. **Submission ENVIADA antes de las 18:00** ✓
+> Última actualización: 20/8/2026 ~20:10. **Submission ENVIADA antes de las 18:00** ✓
 
-## Estado: SHIPPED 🚲
+## Estado: SHIPPED 🚲 — todos los milestones + bonus verdes
 
 - 🟢 Prod: https://carry-predictumx.vercel.app (Vercel `predictumx/carry`, protection off)
 - 🟢 Repo: https://github.com/sebastianlujan/carry-fi (público, todo en inglés)
-- 🟢 Contratos: 10/10 fork tests (loop e2e k=2, vault M2, bridge M3)
-- 🟢 Login: **Privy con Google-only** (app id `cmt1zfaz…4gz6`; createWallet explícito
-  post-auth porque el dashboard tiene create_on_login=off; email deshabilitado a pedido)
-- 🟢 Milestones: M1 ✓ (Privy + balance + enviar + recibir) · M2 ✓ (vault) · M3 ✓ (bridge)
-- 🟢 Home v4 (final): diseño card-based (saludo + posición activa + trust card) con
-  **MIS TOKENS** (ARGt agregado + BRAt/PERt verificados con cast + sARGt). La gráfica de
-  proyección v3 fue revertida a pedido del usuario (queda en git: commit 7aac42f si se
-  quiere recuperar). Verificado en teléfono.
-- 🟢 Recibir con **QR** (lib `qrcode`, tinta sobre lima, sin borde, payload = address pelada)
-  + chip de dirección con copiar. Verificado en teléfono.
-- 🟢 **Selector de red** (Todas/Arbitrum/Base/Polygon): segmentado inline minimalista bajo
-  el balance, puntos monocromos en paleta (negro sobre lima; activa = pill negra con punto
-  lima). Persistido; filtra Home y es default de Enviar/Bridge. Verificado en teléfono.
-- 🟢 Direcciones en formato `0x1234…5678` en toda la UI · chips Copiar en tinta/lima
-- 🟢 Copy de Carry/Loop recortado a one-liners (preferencia del usuario: directo)
+- 🟢 Contratos: **12/12 fork tests** (loop e2e k=2, vault M2, bridge M3, market supply/withdraw)
+- 🟢 Login: Privy Google-only (createWallet explícito post-auth; el dashboard tiene
+  create_on_login=off). Fix del race de red: getSigner espera a que el provider confirme
+  la chain antes de firmar (bug "8453 vs 42161" resuelto).
 
-## Bloques completados
-1. Research on-chain (tabla verificada + 6 trampas → AGENTS.md)
-2. Contratos: SArgtOracle + CarryLoop + swappers + LoopFork/VaultFork/BridgeFork
-3. App: chain layer puro + Wallet/Enviar/Recibir/Earn/Bridge/Loop/Más
-4. Harness .claude + init.sh + docs en inglés
-5. Deploy + Privy + submission + branding bici + gráfica de proyección
+## Milestones
+- **M1** balance + transfers ARGt ✅
+- **M2** vault Morpho (ARGt Prime, ERC-4626) ✅ — se mantiene como venue en Earn
+- **M3** bridge cross-chain (LayerZero OFT) ✅
+- **🎁 Bonus** Twin adicional (BRAt) ✅ — **transaccionable** (Enviar multi-token ARGt/BRAt,
+  direcciones verificadas on-chain en las 3 chains). Bridge de BRAt NO: su adapter OFT no
+  se pudo verificar (no shippeamos address sin verificar).
+
+## Features en prod
+Wallet (balance 3 redes, selector de red pill+menú) · Enviar multi-token · Recibir con QR
+(negro sobre blanco) + dirección completa · **Earn: Market directo a Morpho 13,4% real
+(default) + Vault M2** con gráfica de proyección lima/negro · Bridge con quote live · Loop
+"La bicicleta" gateado honesto (corre en fork) · Actividad on-chain real (getLogs, sin mock)
+· Más (wallet, actividad, seguridad, contratos).
 
 ## Próximos pasos (si el proyecto sigue)
+- [ ] **Loop real en mainnet**: (1) crear+seedear pool Uniswap ARGt/USDC (~$100 capital, EL
+      blocker), (2) `forge script DeployLoop.s.sol` (oracle+market sARGt/USDC, sólo gas),
+      (3) `setSwapper(uniV3)`. El `UniV3Swapper` ya está escrito.
 - [ ] Fondear wallet demo (ETH gas + ARGt) para demo en vivo con writes
-- [ ] Deploy mainnet: `forge script script/DeployLoop.s.sol --rpc-url arbitrum --broadcast -i 1`
-      (oracle + market sARGt/USDC, sólo gas) → setear VITE_CARRY_LOOP/VITE_SARGT_ORACLE
-- [ ] Earn directo al market Morpho (13,4% real vs vault idle 0,0065%) — mayor salto de producto
-- [ ] Liquidez DEX ARGt/USDC (capital, no código) → desbloquea el loop en mainnet
-- [ ] Deleverage parcial · alertas de salud · Activity feed
-- [ ] vitest del chain layer · DeployLoop idempotente · multi-token completo (config)
+- [ ] Bridge de BRAt (falta su adapter OFT oficial de Twin)
+- [ ] Deleverage parcial · alertas de salud del loop · idempotencia de DeployLoop · vitest del front
 
 ## Deuda conocida (no urgente)
-`_sweep` de shares no-op · riesgo "Bajo" por ausencia de CARRY_LOOP · refetch 15s sobre
-RPCs públicos (failover triple presente) · ganancia acumulada usa baseline localStorage
-(se resetea si limpian el browser)
+`_sweep` de shares no-op · riesgo "Bajo" por ausencia de CARRY_LOOP deployado · refetch 15s
+sobre RPCs públicos (failover triple presente) · Actividad: Base/Polygon best-effort (sus
+RPCs limitan getLogs), Arbitrum trae historia completa.
