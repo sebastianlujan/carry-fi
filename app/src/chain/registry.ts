@@ -70,3 +70,9 @@ export const CARRY_LOOP = (import.meta.env.VITE_CARRY_LOOP ?? '') as Address | '
 export const SARGT_ORACLE = (import.meta.env.VITE_SARGT_ORACLE ?? '') as Address | ''
 
 export const SHARED_DECIMALS_UNIT = 1_000_000_000_000n // 1e12: floor obligatorio del bridge (trampa #3)
+
+// Otros twins en Arbitrum — verificados con cast (symbol/decimals) el 20/8/2026.
+export const EXTRA_TOKENS: { symbol: string; name: string; address: Address }[] = [
+  { symbol: 'BRAt', name: 'Brazilian Real token', address: '0xC4ed6Aba5373D78E160F4df39e011F078Be54df8' },
+  { symbol: 'PERt', name: 'Peruvian Sol token', address: '0x899438713f62B04d6CD8e8709986F7256fB6E3d9' },
+]

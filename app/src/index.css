@@ -160,3 +160,41 @@ input, select { font-family: inherit; color: inherit; }
   font-size: 10.5px; letter-spacing: .09em; padding: 9px 4px; border-radius: 15px; }
 .nav button svg { display: block; }
 .nav button.active { background: var(--ink); color: var(--lime); }
+
+/* ── gráfica de proyección (ink card) ─────────────────────── */
+.chart-card { background: var(--ink); border-radius: 24px; padding: 16px 14px 14px; margin-top: 16px; }
+.range-picker { display: flex; justify-content: center; gap: 6px; margin-top: 4px; }
+.range-picker button { color: rgba(255,254,245,.55); font-size: 12.5px; font-weight: 800; letter-spacing: .06em; padding: 7px 14px; border-radius: 999px; }
+.range-picker button.on { background: var(--lime); color: var(--ink); }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 14px; justify-content: center; margin-top: 12px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: rgba(255,254,245,.75); }
+.legend b { color: var(--lime); }
+.legend .sw { display: inline-block; width: 16px; height: 0; border-top: 2.5px solid; border-radius: 2px; }
+.legend .sw.lime { border-color: var(--lime); }
+.legend .sw.white { border-color: #fffef5; }
+.legend .sw.dash { border-color: rgba(255,254,245,.65); border-top-style: dashed; }
+.legend .sw.dot { border-color: #ff8080; border-top-style: dotted; border-top-width: 3px; }
+
+/* patrimonio centrado */
+.patrimonio { text-align: center; margin-top: 18px; }
+.patrimonio .lbl { font-size: 12px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-dim); }
+.patrimonio .big { font-size: clamp(40px, 11vw, 54px); font-weight: 800; letter-spacing: -0.03em; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.patrimonio .sub2 { font-size: 13.5px; font-weight: 700; color: var(--ink-dim); margin-top: 2px; }
+
+/* header con avatar + chain pill */
+.who { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
+.who .avatar { width: 46px; height: 46px; border-radius: 50%; background: var(--lime); border: 2px solid var(--ink); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 0 rgba(20,20,20,.25); }
+.who .nm b { font-size: 17px; font-weight: 800; display: block; letter-spacing: -0.01em; }
+.who .nm span { font-size: 12.5px; font-weight: 600; color: var(--ink-dim); }
+.who select { margin-left: auto; background: rgba(255,255,255,.5); border: 1.5px solid var(--ink); border-radius: 999px; padding: 8px 12px; font-size: 12.5px; font-weight: 800; }
+
+/* mis tokens */
+.tokens { background: #fff; border-radius: 24px; padding: 6px 18px 10px; margin-top: 14px; border: 1px solid rgba(20,20,20,.05); }
+.tokens h3 { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-dim); padding: 12px 0 4px; }
+.trow { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-top: 1px solid rgba(20,20,20,.06); }
+.trow:first-of-type { border-top: none; }
+.trow .l b { font-size: 15.5px; font-weight: 800; display: block; }
+.trow .l span { font-size: 12.5px; font-weight: 600; color: var(--ink-dim); }
+.trow .r { text-align: right; font-variant-numeric: tabular-nums; }
+.trow .r b { font-size: 15.5px; font-weight: 800; display: block; }
+.trow .r span { font-size: 12.5px; font-weight: 600; color: var(--ink-dim); }
