@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import type { Abi } from 'viem'
 import { useWallet } from '../wallet'
-import { useBalances, useSharePrice, useVaultPosition, useCarryRates } from '../hooks'
+import { useBalances, useSharePrice, useVaultPosition, useCarryRates, useVaultApy } from '../hooks'
 import { VAULT_ARGT_PRIME, CHAINS, ARBITRUM_ID } from '../chain/registry'
 import { vaultAbi } from '../chain/abis'
 import { fmtArgt, parseArgt, fmtPct } from '../chain/format'
@@ -17,6 +17,7 @@ export default function Earn() {
   const { data: price } = useSharePrice()
   const { data: pos, refetch: refetchPos } = useVaultPosition(address)
   const { data: rates } = useCarryRates()
+  const { data: vaultApy } = useVaultApy()
 
   const [mode, setMode] = useState<'depositar' | 'retirar'>('depositar')
   const [amountStr, setAmountStr] = useState('')
@@ -70,7 +71,7 @@ export default function Earn() {
           <span className="v">{rates ? `${(rates.utilization * 100).toFixed(0)}%` : '…'}</span></div>
       </div>
 
-      <EarnChart baseArgt={pos?.argtValue ?? 0n} carryApy={rates?.supplyApy ?? 0} />
+      <EarnChart baseArgt={pos?.argtValue ?? 0n} apy={vaultApy ?? 0} />
 
       <div className="seg">
         <button className={mode === 'depositar' ? 'on' : ''} onClick={() => setMode('depositar')}>Depositar</button>

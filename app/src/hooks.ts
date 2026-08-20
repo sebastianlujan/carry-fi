@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import type { Address } from 'viem'
 import { allBalances } from './chain/bridge'
-import { sharePrice, vaultPosition } from './chain/vault'
+import { sharePrice, vaultPosition, vaultRealizedApy } from './chain/vault'
 import { marketRates } from './chain/morpho'
 import { loopPosition, loopChecks } from './chain/loop'
 
@@ -16,6 +16,10 @@ export function useBalances(address: Address | null) {
 
 export function useSharePrice() {
   return useQuery({ queryKey: ['sharePrice'], queryFn: sharePrice, refetchInterval: 30_000 })
+}
+
+export function useVaultApy() {
+  return useQuery({ queryKey: ['vaultApy'], queryFn: vaultRealizedApy, refetchInterval: 60_000 })
 }
 
 export function useVaultPosition(address: Address | null) {
