@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(forge build:*)",
+      "Bash(forge test:*)",
+      "Bash(forge fmt:*)",
+      "Bash(forge script:*)",
+      "Bash(cast call:*)",
+      "Bash(cast sig:*)",
+      "Bash(cast abi-encode:*)",
+      "Bash(cast block-number:*)",
+      "Bash(anvil:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm exec tsc:*)",
+      "Bash(pnpm exec vitest:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(vercel:*)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/*.key)",
+      "Read(**/id_rsa*)"
+    ]
+  },
+  "env": {
+    "ARBITRUM_RPC": "https://arb1.arbitrum.io/rpc",
+    "BASE_RPC": "https://mainnet.base.org",
+    "POLYGON_RPC": "https://1rpc.io/matic"
+  }
+}
