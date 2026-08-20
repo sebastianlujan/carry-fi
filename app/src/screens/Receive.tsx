@@ -17,7 +17,7 @@ export default function Receive({ back }: { back: () => void }) {
       width: 560,
       margin: 2,
       errorCorrectionLevel: 'M',
-      color: { dark: '#141414', light: '#D7F73E' },
+      color: { dark: '#141414', light: '#ffffff' },
     })
       .then(setQr)
       .catch(() => setQr(null))
@@ -38,11 +38,13 @@ export default function Receive({ back }: { back: () => void }) {
       </div>
 
       <div className="qr-wrap">
-        {qr ? (
-          <img src={qr} alt={`QR de tu dirección ${address ?? ''}`} className="qr-img" />
-        ) : (
-          <div className="qr-img qr-loading"><span className="spin" /></div>
-        )}
+        <div className="qr-card">
+          {qr ? (
+            <img src={qr} alt={`QR de tu dirección ${address ?? ''}`} className="qr-img" />
+          ) : (
+            <div className="qr-img qr-loading"><span className="spin" /></div>
+          )}
+        </div>
       </div>
 
       <button className="addr-chip" onClick={copy}>
