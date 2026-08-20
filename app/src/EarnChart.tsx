@@ -1,5 +1,5 @@
-// Gráfica de Posición: proyección al ritmo REAL del vault (idle → ~0%, línea casi plana).
-// value(t) = base·(1+apy)^t, apy = realizado trailing del vault. Fondo lima, trazo negro.
+// Gráfica de Posición: rendimiento ESPERADO según el carry (tasa live del market ARGt/USDC).
+// value(t) = base·(1+apy)^t. Fondo lima, trazo negro.
 import { useMemo, useState } from 'react'
 import { fromWei } from './chain/format'
 
@@ -47,7 +47,7 @@ export default function EarnChart({ baseArgt, apy }: { baseArgt: bigint; apy: nu
         {RANGES.map((r, i) => (
           <button key={r.label} className={i === ri ? 'on' : ''} onClick={() => setRi(i)}>{r.label}</button>
         ))}
-        <span className="rate">≈{(apy * 100).toFixed(2)}% real{apy < 0.005 ? ' · el vault está idle' : ''}</span>
+        <span className="rate">esperado al {(apy * 100).toFixed(1)}% del carry</span>
       </div>
       {isRef && <div className="earn-note">Proyección de ejemplo sobre $1.000 — depositá para ver la tuya.</div>}
     </div>
