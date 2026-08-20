@@ -9,8 +9,9 @@ import Earn from './screens/Earn'
 import Bridge from './screens/Bridge'
 import Loop from './screens/Loop'
 import Menu from './screens/Menu'
+import Receive from './screens/Receive'
 
-export type Screen = 'home' | 'send' | 'earn' | 'bridge' | 'loop' | 'menu'
+export type Screen = 'home' | 'send' | 'receive' | 'earn' | 'bridge' | 'loop' | 'menu'
 
 function Wordmark() {
   return (
@@ -66,6 +67,7 @@ export default function App() {
   const S: Record<Screen, React.ReactNode> = {
     home: <Home go={setScreen} />,
     send: <Send back={() => setScreen('home')} />,
+    receive: <Receive back={() => setScreen('home')} />,
     earn: <Earn />,
     bridge: <Bridge back={() => setScreen('home')} />,
     loop: <Loop />,
@@ -78,7 +80,7 @@ export default function App() {
     { id: 'earn', label: 'Posición', icon: <IconChart /> },
     { id: 'menu', label: 'Más', icon: <IconDots /> },
   ]
-  const active = screen === 'send' || screen === 'bridge' ? 'home' : screen
+  const active = screen === 'send' || screen === 'bridge' || screen === 'receive' ? 'home' : screen
 
   return (
     <div className="phone">

@@ -4,6 +4,7 @@ import { useBalances, useVaultPosition, useLoopPosition } from '../hooks'
 import { fmtMoney, fmtArgt } from '../chain/format'
 import { CHAINS, CHAIN_IDS } from '../chain/registry'
 import { argtToUsdc } from '../chain/loop'
+import { getBaseline } from '../chain/baseline'
 import { IconShield, Chevron } from '../Icons'
 import type { Screen } from '../App'
 
@@ -29,8 +30,9 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
 
   const working = vaultArgt + loopArgt - (debtArgt ?? 0n) // capital trabajando
   const total = walletArgt + working
-  // ganancia devengada sobre las shares actuales (share price > 1): aproximación honesta
-  const gains = vault ? vault.argtValue - vault.shares : 0n
+  // ganancia = valor actual − capital aportado (baseline local por address); nunca negativa en display
+  const rawGains = vault && address ? vault.argtValue - getBaseline(address) : 0n
+  const gains = rawGains > 0n && vault && vault.argtValue > 0n ? rawGains : 0n
   const health = loop && loop.debtUsdc > 0n ? Number(loop.healthWad) / 1e18 : null
   const riesgo = health === null ? 'Bajo' : health > 1.5 ? 'Moderado' : health > 1.15 ? 'Alto' : 'Crítico'
   const riesgoClass = health === null ? 'health-good' : health > 1.5 ? '' : health > 1.15 ? 'health-warn' : 'health-bad'
@@ -93,6 +95,7 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
       <div className="actions">
         <button className="btn primary" onClick={() => go('send')}>Enviar <span>↗</span></button>
         <button className="btn ghost" onClick={() => go('bridge')}>Bridge <span>⇄</span></button>
+        <button className="btn ghost wide" style={{ minHeight: 58 }} onClick={() => go('receive')}>Recibir <span>↘</span></button>
       </div>
     </div>
   )

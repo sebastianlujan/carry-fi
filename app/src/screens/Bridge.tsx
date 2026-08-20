@@ -23,12 +23,13 @@ export default function Bridge({ back }: { back: () => void }) {
   const raw = parseArgt(amountStr)
   const amount = raw !== null ? floorToShared(raw) : null
   const bal = balances?.[src] ?? 0n
-  const valid = amount !== null && amount > 0n && amount <= bal && src !== dst && !!address
+  const quotable = amount !== null && amount > 0n && src !== dst && !!address
+  const valid = quotable && amount <= bal
 
   const { data: fee, isFetching: quoting } = useQuery({
     queryKey: ['bridgeFee', src, dst, amount?.toString(), address],
     queryFn: () => quoteBridge(src, dst, address!, amount!),
-    enabled: valid,
+    enabled: quotable,
     refetchInterval: 20_000,
   })
 
@@ -99,6 +100,7 @@ export default function Bridge({ back }: { back: () => void }) {
           <span className="v">{amount !== null ? `$${fmtArgt(amount)}` : '—'}</span></div>
       </div>
 
+      {quotable && !valid && <div className="hint">Fee cotizado en vivo — te falta saldo ARGt en {CHAINS[src].name} para ejecutar.</div>}
       {err && <div className="status err">{err}</div>}
       {msg && !err && <div className="status">{msg}</div>}
       <div className="actions">

@@ -7,6 +7,7 @@ import {
   type Address, type Chain, type WalletClient, type PublicActions,
 } from 'viem'
 import { privateKeyToAccount, generatePrivateKey } from 'viem/accounts'
+import { arbitrum, base, polygon } from 'viem/chains'
 import { VIEM_CHAINS } from './chain/clients'
 import type { ChainId } from './chain/registry'
 import { CHAINS } from './chain/registry'
@@ -102,6 +103,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         loginMethods: ['email', 'google'],
         embeddedWallets: { ethereum: { createOnLogin: 'users-without-wallets' } },
         appearance: { theme: 'light', accentColor: '#141414' },
+        defaultChain: arbitrum,
+        supportedChains: [arbitrum, base, polygon],
       }}
     >
       <PrivyBridge>{children}</PrivyBridge>

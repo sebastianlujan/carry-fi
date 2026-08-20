@@ -8,6 +8,7 @@ import { VAULT_ARGT_PRIME, CHAINS, ARBITRUM_ID } from '../chain/registry'
 import { vaultAbi } from '../chain/abis'
 import { fmtArgt, parseArgt, fmtPct } from '../chain/format'
 import { runTx, ensureAllowance, errMsg } from '../tx'
+import { addBaseline } from '../chain/baseline'
 
 export default function Earn() {
   const { address, getSigner } = useWallet()
@@ -37,6 +38,7 @@ export default function Earn() {
         await ensureAllowance(signer, ARBITRUM_ID, CHAINS[ARBITRUM_ID].argt, address, VAULT_ARGT_PRIME, amount)
         setMsg('2/2 · Depositando…')
         await runTx(signer, { address: VAULT_ARGT_PRIME, abi: vaultAbi as Abi, functionName: 'deposit', args: [amount, address] })
+        addBaseline(address, amount)
         setMsg('Depositado ✓ — tus pesos ya están rindiendo.')
       } else {
         // ARGt deseado → shares vía share price live (redondeo hacia arriba, capped al balance)
@@ -44,6 +46,7 @@ export default function Earn() {
         const capped = shares > (pos?.shares ?? 0n) ? (pos?.shares ?? 0n) : shares
         setMsg('Retirando…')
         await runTx(signer, { address: VAULT_ARGT_PRIME, abi: vaultAbi as Abi, functionName: 'redeem', args: [capped, address, address] })
+        addBaseline(address, -amount)
         setMsg('Retirado ✓')
       }
       setAmountStr(''); void refetchBal(); void refetchPos()

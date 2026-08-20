@@ -31,6 +31,8 @@ export function errMsg(e: unknown): string {
   if (e instanceof Error) {
     const m = e.message
     if (m.includes('User rejected') || m.includes('denied')) return 'Firmá para continuar.'
+    if (/insufficient funds|gas required exceeds|fee cap/i.test(m))
+      return 'Te falta ETH/POL para el gas en esta red. Mandale un poco de gas a tu dirección y reintentá.'
     return m.split('\n')[0].slice(0, 140)
   }
   return 'Algo falló.'
