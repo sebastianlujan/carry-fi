@@ -1,6 +1,6 @@
 # CHECKPOINT — CarryFi
 
-> Última actualización: 20/8/2026 ~18:45. **Submission ENVIADA antes de las 18:00** ✓
+> Última actualización: 20/8/2026 ~19:00. **Submission ENVIADA antes de las 18:00** ✓
 
 ## Estado: SHIPPED 🚲
 
@@ -14,6 +14,8 @@
   **MIS TOKENS** (ARGt agregado + BRAt/PERt verificados con cast + sARGt). La gráfica de
   proyección v3 fue revertida a pedido del usuario (queda en git: commit 7aac42f si se
   quiere recuperar). Verificado en teléfono.
+- 🟢 Recibir con **QR** (lib `qrcode`, tinta sobre lima, sin borde, payload = address pelada)
+  + chip de dirección con copiar. Verificado en teléfono.
 
 ## Bloques completados
 1. Research on-chain (tabla verificada + 6 trampas → AGENTS.md)
@@ -28,7 +30,7 @@
       (oracle + market sARGt/USDC, sólo gas) → setear VITE_CARRY_LOOP/VITE_SARGT_ORACLE
 - [ ] Earn directo al market Morpho (13,4% real vs vault idle 0,0065%) — mayor salto de producto
 - [ ] Liquidez DEX ARGt/USDC (capital, no código) → desbloquea el loop en mainnet
-- [ ] Deleverage parcial · alertas de salud · QR real en Recibir · Activity feed
+- [ ] Deleverage parcial · alertas de salud · Activity feed
 - [ ] vitest del chain layer · DeployLoop idempotente · multi-token completo (config)
 
 ## Deuda conocida (no urgente)
