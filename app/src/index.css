@@ -146,8 +146,8 @@ input, select { font-family: inherit; color: inherit; }
 .trust .how { display: flex; align-items: center; justify-content: space-between; width: 100%;
   background: rgba(255,255,255,.75); border-radius: 12px; padding: 11px 14px; margin-top: 12px; font-size: 14px; font-weight: 700; }
 
-.chip { display: inline-flex; align-items: center; gap: 7px; background: rgba(20,20,20,.06);
-  border-radius: 10px; padding: 8px 13px; font-size: 13.5px; font-weight: 700; }
+.chip { display: inline-flex; align-items: center; gap: 7px; background: var(--ink); color: var(--lime);
+  border-radius: 10px; padding: 8px 13px; font-size: 13.5px; font-weight: 800; }
 
 .logout-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 9px;
   background: rgba(255,255,255,.5); border-radius: 18px; padding: 16px; margin-top: 16px;
@@ -177,7 +177,7 @@ input, select { font-family: inherit; color: inherit; }
 .qr-img { width: min(64vw, 260px); height: min(64vw, 260px); border-radius: 24px; background: var(--lime); }
 .qr-loading { display: flex; align-items: center; justify-content: center; }
 .addr-chip { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;
-  background: #fff; border: 1px solid rgba(20,20,20,.07); border-radius: 16px; padding: 13px 14px; margin-top: 16px; }
+  background: transparent; border: 1.5px solid var(--ink); border-radius: 16px; padding: 13px 14px; margin-top: 16px; }
 .addr-chip .mono { font-size: 12.5px; font-weight: 700; word-break: break-all; text-align: left; }
 
 
