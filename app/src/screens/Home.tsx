@@ -67,10 +67,7 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
         <p>{pedaleando ? 'Tu Carrybike está pedaleando.' : 'Tu Carrybike está lista para pedalear.'}</p>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 18 }}>
-        <div className="balance-label" style={{ marginTop: 0 }}>Total en pesos</div>
-        <NetworkPicker balances={balances} />
-      </div>
+      <div className="balance-label" style={{ marginTop: 18 }}>Total en pesos</div>
       <div className="balance" style={{ fontSize: 'clamp(44px,12vw,60px)' }}>
         <span className="cur">$</span>{fmtMoney(total)}
       </div>
