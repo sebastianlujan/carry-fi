@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import QRCode from 'qrcode'
 import { useWallet } from '../wallet'
 import { CHAINS, CHAIN_IDS } from '../chain/registry'
-import { shortAddr } from '../chain/format'
 import { IconCopy } from '../Icons'
 
 export default function Receive({ back }: { back: () => void }) {
@@ -48,7 +47,7 @@ export default function Receive({ back }: { back: () => void }) {
       </div>
 
       <button className="addr-chip" onClick={copy}>
-        <span className="mono" style={{ fontSize: 16 }}>{address ? shortAddr(address) : ''}</span>
+        <span className="mono addr-full">{address ?? ''}</span>
         <span className="chip" style={{ flexShrink: 0 }}><IconCopy /> {copied ? '✓' : 'Copiar'}</span>
       </button>
 

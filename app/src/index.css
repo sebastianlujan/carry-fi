@@ -179,7 +179,8 @@ input, select { font-family: inherit; color: inherit; }
 .qr-loading { display: flex; align-items: center; justify-content: center; }
 .addr-chip { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;
   background: transparent; border: 1.5px solid var(--ink); border-radius: 16px; padding: 13px 14px; margin-top: 16px; }
-.addr-chip .mono { font-size: 12.5px; font-weight: 700; word-break: break-all; text-align: left; }
+.addr-chip .mono { font-size: 13px; font-weight: 700; word-break: break-all; text-align: left; line-height: 1.5; }
+.addr-full { letter-spacing: .01em; }
 
 
 /* ── selector de red: pill de header + menú anclado ───────── */
