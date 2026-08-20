@@ -1,22 +1,36 @@
-# CHECKPOINT — Carry
+# CHECKPOINT — CarryFi
 
-> Actualizado por el leader al cerrar cada bloque. Deadline: 20/8 18:00.
+> Última actualización: 20/8/2026 ~18:20. **Submission ENVIADA antes de las 18:00** ✓
 
-## Estado: BLOQUE 5 — deployado ✓
-- [x] Research on-chain completo (ver AGENTS.md: tabla + 6 trampas)
-- [x] init.sh + scaffold + harness
-- [x] BLOQUE 2: SArgtOracle + CarryLoop + swappers + LoopFork e2e (7/7)
-- [x] BLOQUE 3: VaultFork + BridgeFork (10/10 total) + DeployLoop.s.sol
-- [x] BLOQUE 4: app completa (Home/Enviar/Earn/Bridge/Loop/Menú) — tsc limpio, build ok
-- [x] BLOQUE 5: PROD LIVE → https://carry-predictumx.vercel.app (protection off, 200)
-- [ ] Pendiente usuario: VITE_PRIVY_APP_ID (hoy corre en modo burner) → vercel env add + redeploy
-- [ ] Opcional: deploy mainnet oracle+market (DeployLoop.s.sol, necesita deployer con ETH)
-- [ ] Submission del workshop (URL, nombre, mail, X) — cierra 18:00
+## Estado: SHIPPED 🚲
 
-## Bloqueos
-- `VITE_PRIVY_APP_ID` pendiente (usuario). Fallback burner listo por diseño.
-- Deploy mainnet de oracle+market: opcional, requiere deployer con ETH en Arbitrum.
+- 🟢 Prod: https://carry-predictumx.vercel.app (Vercel `predictumx/carry`, protection off)
+- 🟢 Repo: https://github.com/sebastianlujan/carry-fi (público, todo en inglés)
+- 🟢 Contratos: 10/10 fork tests (loop e2e k=2, vault M2, bridge M3)
+- 🟢 Login: **Privy con Google-only** (app id `cmt1zfaz…4gz6`; createWallet explícito
+  post-auth porque el dashboard tiene create_on_login=off; email deshabilitado a pedido)
+- 🟢 Milestones: M1 ✓ (Privy + balance + enviar + recibir) · M2 ✓ (vault) · M3 ✓ (bridge)
+- 🟢 Home v3: gráfica de proyección (historia lima + peso estable/deval 15/deval 25 con
+  APY live), patrimonio en US$ neto de deuda, selector de red, MIS TOKENS (ARGt + BRAt/PERt
+  verificados con cast), verificada en teléfono por el usuario
 
-## Orden de sacrificio si el tiempo aprieta
-deploy mainnet → fee del loop → deleverage parcial → Activity screen.
-El loop e2e en fork y las 4 pantallas core no se negocian.
+## Bloques completados
+1. Research on-chain (tabla verificada + 6 trampas → AGENTS.md)
+2. Contratos: SArgtOracle + CarryLoop + swappers + LoopFork/VaultFork/BridgeFork
+3. App: chain layer puro + Wallet/Enviar/Recibir/Earn/Bridge/Loop/Más
+4. Harness .claude + init.sh + docs en inglés
+5. Deploy + Privy + submission + branding bici + gráfica de proyección
+
+## Próximos pasos (si el proyecto sigue)
+- [ ] Fondear wallet demo (ETH gas + ARGt) para demo en vivo con writes
+- [ ] Deploy mainnet: `forge script script/DeployLoop.s.sol --rpc-url arbitrum --broadcast -i 1`
+      (oracle + market sARGt/USDC, sólo gas) → setear VITE_CARRY_LOOP/VITE_SARGT_ORACLE
+- [ ] Earn directo al market Morpho (13,4% real vs vault idle 0,0065%) — mayor salto de producto
+- [ ] Liquidez DEX ARGt/USDC (capital, no código) → desbloquea el loop en mainnet
+- [ ] Deleverage parcial · alertas de salud · QR real en Recibir · Activity feed
+- [ ] vitest del chain layer · DeployLoop idempotente · multi-token completo (config)
+
+## Deuda conocida (no urgente)
+`_sweep` de shares no-op · riesgo "Bajo" por ausencia de CARRY_LOOP · refetch 15s sobre
+RPCs públicos (failover triple presente) · ganancia acumulada usa baseline localStorage
+(se resetea si limpian el browser)
