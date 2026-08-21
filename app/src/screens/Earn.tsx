@@ -19,12 +19,14 @@ type Venue = 'market' | 'vault'
 export default function Earn() {
   const { address, getSigner } = useWallet()
   const [assetIx, setAssetIx] = useState(0)
+  const [marketIx, setMarketIx] = useState(0)
   const asset = EARN_ASSETS[assetIx]
+  const market = asset.markets[marketIx] ?? asset.markets[0]
 
   const { data: price } = useSharePrice(asset.vault)
   const { data: vaultPos, refetch: refetchVault } = useVaultPosition(address, asset.vault)
-  const { data: marketPos, refetch: refetchMarket } = useMarketPosition(address, asset.marketId)
-  const { data: rates } = useCarryRates(asset.marketId)
+  const { data: marketPos, refetch: refetchMarket } = useMarketPosition(address, market.id)
+  const { data: rates } = useCarryRates(market.id)
   const { data: bal, refetch: refetchBal } = useQuery({
     queryKey: ['earnBal', asset.token, address],
     queryFn: () => clientFor(ARBITRUM_ID).readContract({ address: asset.token, abi: erc20Abi, functionName: 'balanceOf', args: [address as Address] }),
@@ -47,7 +49,7 @@ export default function Earn() {
   const valid = amount !== null && amount > 0n &&
     (mode === 'depositar' ? amount <= balArb : amount <= position)
 
-  function pickAsset(ix: number) { setAssetIx(ix); setAmountStr('') }
+  function pickAsset(ix: number) { setAssetIx(ix); setMarketIx(0); setAmountStr('') }
 
   async function go() {
     if (!valid || amount === null || !address) return
@@ -60,7 +62,7 @@ export default function Earn() {
         await ensureAllowance(signer, ARBITRUM_ID, asset.token, address, spender, amount)
         setMsg('2/2 · Depositando…')
         if (isMarket) {
-          await runTx(signer, { address: MORPHO, abi: morphoAbi as Abi, functionName: 'supply', args: [asset.market, amount, 0n, address, '0x'] })
+          await runTx(signer, { address: MORPHO, abi: morphoAbi as Abi, functionName: 'supply', args: [market.params, amount, 0n, address, '0x'] })
         } else {
           await runTx(signer, { address: asset.vault, abi: vaultAbi as Abi, functionName: 'deposit', args: [amount, address] })
         }
@@ -71,9 +73,9 @@ export default function Earn() {
           const full = !!marketPos && marketPos.shares > 0n &&
             (amount >= marketPos.assets || marketPos.assets - amount < SHARED_DECIMALS_UNIT)
           if (full && marketPos) {
-            await runTx(signer, { address: MORPHO, abi: morphoAbi as Abi, functionName: 'withdraw', args: [asset.market, 0n, marketPos.shares, address, address] })
+            await runTx(signer, { address: MORPHO, abi: morphoAbi as Abi, functionName: 'withdraw', args: [market.params, 0n, marketPos.shares, address, address] })
           } else {
-            await runTx(signer, { address: MORPHO, abi: morphoAbi as Abi, functionName: 'withdraw', args: [asset.market, amount, 0n, address, address] })
+            await runTx(signer, { address: MORPHO, abi: morphoAbi as Abi, functionName: 'withdraw', args: [market.params, amount, 0n, address, address] })
           }
         } else {
           const shares = price ? (amount * 10n ** 18n + price - 1n) / price : 0n
@@ -96,12 +98,23 @@ export default function Earn() {
 
       <div className="balance-label" style={{ marginTop: 14 }}>Rindiendo</div>
       <div className="balance" style={{ fontSize: 'clamp(38px,10vw,52px)' }}><span className="cur">$</span>{fmtArgt(position)}</div>
-      <div className="sub">{isMarket ? `Market ${asset.symbol}/USDC · Morpho · ${fmtPct((rates?.supplyApy ?? 0) * 100)} APY` : `${asset.symbol} Prime · ${vaultPos ? fmtArgt(vaultPos.shares) : '0'} s${asset.symbol}`}</div>
+      <div className="sub">{isMarket ? `Market ${asset.symbol}/${market.label} · Morpho · ${fmtPct((rates?.supplyApy ?? 0) * 100)} APY` : `${asset.symbol} Prime · ${vaultPos ? fmtArgt(vaultPos.shares) : '0'} s${asset.symbol}`}</div>
 
       <div className="seg" style={{ marginTop: 14 }}>
         <button className={isMarket ? 'on' : ''} onClick={() => { setVenue('market'); setAmountStr('') }}>Market · {rates ? (rates.supplyApy * 100).toFixed(1) : '…'}%</button>
         <button className={!isMarket ? 'on' : ''} onClick={() => { setVenue('vault'); setAmountStr('') }}>Vault</button>
       </div>
+
+      {isMarket && asset.markets.length > 1 && (
+        <div className="collat-row">
+          <span className="collat-label">Colateral</span>
+          {asset.markets.map((mk, i) => (
+            <button key={mk.label} className={i === marketIx ? 'on' : ''} onClick={() => { setMarketIx(i); setAmountStr('') }}>
+              {mk.label === 'syrupUSDC' ? 'syrupUSDC · Maple' : mk.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="card dark">
         <h3>{isMarket ? `El carry ${asset.symbol}, directo al market` : `${asset.symbol} Prime${asset.symbol === 'ARGt' ? ' (Milestone 2)' : ''}`}</h3>

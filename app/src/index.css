@@ -238,3 +238,9 @@ input, select { font-family: inherit; color: inherit; }
 .more-btn { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px;
   border-radius: 50%; border: 1.5px solid var(--ink); background: rgba(255,255,255,.35); color: var(--ink); }
 .more-btn:active { transform: scale(.94); }
+
+/* mini-selector de colateral (Earn market) */
+.collat-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.collat-row .collat-label { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim); margin-right: 2px; }
+.collat-row button { font-size: 12.5px; font-weight: 800; padding: 7px 12px; border-radius: 999px; border: 1.5px solid var(--ink); background: rgba(255,255,255,.35); color: var(--ink); }
+.collat-row button.on { background: var(--ink); color: var(--lime); }

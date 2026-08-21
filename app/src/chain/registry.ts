@@ -100,18 +100,48 @@ export const MARKET_BRAT_USDC: MarketParams = {
   irm: IRM_ADAPTIVE_CURVE,
   lltv: LLTV_77,
 }
+export const SYRUP_USDC: Address = '0x41CA7586cC1311807B4605fBB748a3B8862b42b5' // Maple Syrup USDC
+export const MARKET_BRAT_SYRUP_ID = '0xc34bc68474825fdd1894eeba3f063896b1a0ec0729637dda2642e07bdbd60057' as const
+export const MARKET_BRAT_SYRUP: MarketParams = {
+  loanToken: BRAT_ARBITRUM_ADDR,
+  collateralToken: SYRUP_USDC,
+  oracle: '0x2B9Ca7702798e8d7F3DeD746C23036AB37adAd37',
+  irm: IRM_ADAPTIVE_CURVE,
+  lltv: LLTV_77,
+}
+// ARGt/syrupUSDC (verificado antes: colateral syrupUSDC, oracle 0x153F…)
+export const MARKET_ARGT_SYRUP_ID = '0x31438259d2506b197fad4be6d07ee4ba0d59435dbe354ccd21d2e8547a752948' as const
+export const MARKET_ARGT_SYRUP: MarketParams = {
+  loanToken: ARGT_ARBITRUM_ADDR,
+  collateralToken: SYRUP_USDC,
+  oracle: '0x153F542b5C9e267f0C1F7Bccc62Fa9dceDDB4DcE',
+  irm: IRM_ADAPTIVE_CURVE,
+  lltv: LLTV_77,
+}
 
+export interface EarnMarket { label: string; id: `0x${string}`; params: MarketParams } // label = colateral
 export interface EarnAsset {
   symbol: string
   name: string
   token: Address          // token en Arbitrum
   vault: Address          // <symbol> Prime (ERC-4626)
-  marketId: `0x${string}` // market Morpho Blue donde se suplea
-  market: MarketParams
+  markets: EarnMarket[]    // markets Morpho donde se suplea (por colateral)
 }
 export const EARN_ASSETS: EarnAsset[] = [
-  { symbol: 'ARGt', name: 'Argentine Peso token', token: ARGT_ARBITRUM_ADDR, vault: VAULT_ARGT_PRIME, marketId: MARKET_ARGT_USDC_ID, market: MARKET_ARGT_USDC },
-  { symbol: 'BRAt', name: 'Brazilian Real token', token: BRAT_ARBITRUM_ADDR, vault: VAULT_BRAT_PRIME, marketId: MARKET_BRAT_USDC_ID, market: MARKET_BRAT_USDC },
+  {
+    symbol: 'ARGt', name: 'Argentine Peso token', token: ARGT_ARBITRUM_ADDR, vault: VAULT_ARGT_PRIME,
+    markets: [
+      { label: 'USDC', id: MARKET_ARGT_USDC_ID, params: MARKET_ARGT_USDC },
+      { label: 'syrupUSDC', id: MARKET_ARGT_SYRUP_ID, params: MARKET_ARGT_SYRUP },
+    ],
+  },
+  {
+    symbol: 'BRAt', name: 'Brazilian Real token', token: BRAT_ARBITRUM_ADDR, vault: VAULT_BRAT_PRIME,
+    markets: [
+      { label: 'USDC', id: MARKET_BRAT_USDC_ID, params: MARKET_BRAT_USDC },
+      { label: 'syrupUSDC', id: MARKET_BRAT_SYRUP_ID, params: MARKET_BRAT_SYRUP },
+    ],
+  },
 ]
 
 
