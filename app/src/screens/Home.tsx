@@ -54,9 +54,13 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
     refetchInterval: 30_000,
   })
 
+  // Riesgo = salud de la posición de loop, LIVE. Sin apalancamiento no hay nada que medir → "—".
+  // (Mayor health = menor riesgo. Umbrales sobre health = colateral·LLTV/deuda en WAD.)
   const health = loop && loop.debtUsdc > 0n ? Number(loop.healthWad) / 1e18 : null
-  const riesgo = health === null ? 'Bajo' : health > 1.5 ? 'Moderado' : health > 1.15 ? 'Alto' : 'Crítico'
-  const riesgoClass = health === null ? 'health-good' : health > 1.5 ? '' : health > 1.15 ? 'health-warn' : 'health-bad'
+  const riesgo = health === null ? '—'
+    : health > 1.6 ? 'Bajo' : health > 1.3 ? 'Moderado' : health > 1.1 ? 'Alto' : 'Crítico'
+  const riesgoColor = health === null ? 'rgba(255,254,245,.45)'
+    : health > 1.6 ? 'var(--lime)' : health > 1.3 ? '#ffd34d' : health > 1.1 ? '#ff9d5c' : '#ff6b6b'
   const pedaleando = loopArgt > 0n || vaultArgt > 0n
 
   return (
@@ -84,7 +88,7 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
           </div>
           <div className="cell">
             <div className="k">Riesgo</div>
-            <div className={`v ${riesgoClass}`} style={health === null ? { color: 'var(--lime)' } : undefined}>{riesgo}</div>
+            <div className="v" style={{ color: riesgoColor }}>{riesgo}</div>
           </div>
         </div>
         <button className="pos-cta" onClick={() => go('earn')}>
