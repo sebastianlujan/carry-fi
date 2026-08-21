@@ -1,6 +1,6 @@
 # CHECKPOINT — CarryFi
 
-> Última actualización: 20/8/2026 ~21:40. **Submission ENVIADA antes de las 18:00** ✓
+> Última actualización: 21/8/2026 ~00:30. **Submission ENVIADA antes de las 18:00** ✓
 
 ## Estado: SHIPPED 🚲 — todos los milestones + bonus verdes
 
@@ -12,7 +12,11 @@
   la chain antes de firmar (bug "8453 vs 42161" resuelto).
 
 ## Post-submission (mejoras)
-- **Earn al market real** (13,4%) como default + Vault M2 como opción · **Ethereum** como 4ta
+- **Earn multi-activo + multi-colateral**: toggle ARGt/BRAt, venue Market/Vault, y sub-selector
+  de colateral USDC / syrupUSDC·Maple. Los 4 markets (ARGt·USDC/syrup, BRAt·USDC/syrup) +
+  BRAt Prime vault verificados on-chain. Capa chain generalizada (config en EARN_ASSETS).
+  syrupUSDC = Maple Syrup USDC (colateral yield-bearing).
+- **Earn al market real** (~12-13%) como default + Vault Prime como opción · **Ethereum** como 4ta
   chain del bridge (adapter verificado, peers bidireccionales) · **Enviar multi-token ARGt/BRAt**
   (bonus real) · **Actividad on-chain** en el nav · **Más** en botón ••• del header · Home
   reordenado (acciones arriba, trust abajo) · Riesgo dinámico (Bajo sin loop, live con posición)
