@@ -9,7 +9,7 @@ import { CHAINS, VAULT_ARGT_PRIME, ARBITRUM_ID, BASE_ID, POLYGON_ID, type ChainI
 const TRANSFER = parseAbiItem('event Transfer(address indexed from, address indexed to, uint256 value)')
 
 // RPC + rango + block time por chain (los que sirven getLogs)
-const SRC: Record<ChainId, { rpc: string; chain: Chain; range: bigint; blockSec: number }> = {
+const SRC: Partial<Record<ChainId, { rpc: string; chain: Chain; range: bigint; blockSec: number }>> = {
   [ARBITRUM_ID]: { rpc: 'https://arb1.arbitrum.io/rpc', chain: arbitrum, range: 4_000_000n, blockSec: 0.25 },
   [POLYGON_ID]: { rpc: 'https://polygon-bor-rpc.publicnode.com', chain: polygon, range: 45_000n, blockSec: 2.1 },
   [BASE_ID]: { rpc: 'https://base-rpc.publicnode.com', chain: base, range: 40_000n, blockSec: 2 },
@@ -30,6 +30,7 @@ export interface Tx {
 
 async function fetchChain(id: ChainId, user: Address): Promise<Tx[]> {
   const s = SRC[id]
+  if (!s) return []
   const c = createPublicClient({ chain: s.chain, transport: http(s.rpc, { timeout: 9_000 }) })
   const latest = await c.getBlockNumber()
   const fromBlock = latest > s.range ? latest - s.range : 0n
@@ -55,7 +56,7 @@ async function fetchChain(id: ChainId, user: Address): Promise<Tx[]> {
 }
 
 export async function fetchActivity(user: Address): Promise<Tx[]> {
-  const ids: ChainId[] = [ARBITRUM_ID, BASE_ID, POLYGON_ID]
+  const ids = (Object.keys(SRC).map(Number) as ChainId[])
   const results = await Promise.all(ids.map((id) => fetchChain(id, user).catch(() => [] as Tx[])))
   const seen = new Set<string>()
   return results
