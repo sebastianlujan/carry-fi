@@ -57,10 +57,10 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
   // Riesgo = salud de la posición de loop, LIVE. Sin apalancamiento no hay nada que medir → "—".
   // (Mayor health = menor riesgo. Umbrales sobre health = colateral·LLTV/deuda en WAD.)
   const health = loop && loop.debtUsdc > 0n ? Number(loop.healthWad) / 1e18 : null
-  const riesgo = health === null ? '—'
-    : health > 1.6 ? 'Bajo' : health > 1.3 ? 'Moderado' : health > 1.1 ? 'Alto' : 'Crítico'
-  const riesgoColor = health === null ? 'rgba(255,254,245,.45)'
-    : health > 1.6 ? 'var(--lime)' : health > 1.3 ? '#ffd34d' : health > 1.1 ? '#ff9d5c' : '#ff6b6b'
+  const riesgo = health === null || health > 1.6 ? 'Bajo'
+    : health > 1.3 ? 'Moderado' : health > 1.1 ? 'Alto' : 'Crítico'
+  const riesgoColor = health === null || health > 1.6 ? 'var(--lime)'
+    : health > 1.3 ? '#ffd34d' : health > 1.1 ? '#ff9d5c' : '#ff6b6b'
   const pedaleando = loopArgt > 0n || vaultArgt > 0n
 
   return (
