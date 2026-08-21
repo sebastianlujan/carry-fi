@@ -1,6 +1,6 @@
 # CHECKPOINT — CarryFi
 
-> Última actualización: 20/8/2026 ~21:15. **Submission ENVIADA antes de las 18:00** ✓
+> Última actualización: 20/8/2026 ~21:40. **Submission ENVIADA antes de las 18:00** ✓
 
 ## Estado: SHIPPED 🚲 — todos los milestones + bonus verdes
 
@@ -16,7 +16,7 @@
   chain del bridge (adapter verificado, peers bidireccionales) · **Enviar multi-token ARGt/BRAt**
   (bonus real) · **Actividad on-chain** en el nav · **Más** en botón ••• del header · Home
   reordenado (acciones arriba, trust abajo) · Riesgo dinámico (Bajo sin loop, live con posición)
-  · label "leverage" en vez de "k".
+  · "palanca" en vez de "k" (texto y variable) · chip de dirección en Recibir con fondo blanco.
 - **Review pass** (lead→reviewer→implementer): 6 trampas limpias, direcciones verificadas
   on-chain, cero CRITICAL/HIGH. Aplicados 2 MEDIUM del CarryLoop (_sweep de shares real;
   deleverage parcial rechazado) + fix del polvo en withdraw-all del market. LOW restante:
