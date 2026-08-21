@@ -7,7 +7,7 @@ import {
   type Address, type Chain, type WalletClient, type PublicActions,
 } from 'viem'
 import { privateKeyToAccount, generatePrivateKey } from 'viem/accounts'
-import { arbitrum, base, polygon } from 'viem/chains'
+import { arbitrum, base, polygon, mainnet } from 'viem/chains'
 import { VIEM_CHAINS } from './chain/clients'
 import type { ChainId } from './chain/registry'
 import { CHAINS } from './chain/registry'
@@ -95,18 +95,20 @@ function PrivyBridge({ children }: { children: ReactNode }) {
     exportKey: wallet?.walletClientType === 'privy' ? () => { void exportWallet() } : null,
     getSigner: async (chainId) => {
       if (!wallet) throw new Error('sin wallet')
-      await wallet.switchChain(chainId)
+      try { await wallet.switchChain(chainId) } catch { /* seguimos: viem reintenta en el tx */ }
       const provider = await wallet.getEthereumProvider()
-      // esperar a que el provider REALMENTE esté en la chain destino antes de firmar
-      // (switchChain no propaga sincrónico → error "current chain does not match target")
-      for (let i = 0; i < 25; i++) {
+      // esperar (best-effort) a que el provider confirme la chain; parse flexible (hex/dec/número).
+      const current = async (): Promise<number> => {
         try {
-          const hex = (await provider.request({ method: 'eth_chainId' })) as string
-          if (parseInt(hex, 16) === chainId) break
-        } catch { /* reintenta */ }
-        if (i === 24) throw new Error(`No pude cambiar a ${VIEM_CHAINS[chainId].name}. Reintentá.`)
+          const r = (await provider.request({ method: 'eth_chainId' })) as string | number
+          return typeof r === 'number' ? r : parseInt(r, r.startsWith?.('0x') ? 16 : 10)
+        } catch { return -1 }
+      }
+      for (let i = 0; i < 16; i++) {
+        if ((await current()) === chainId) break
         await new Promise((r) => setTimeout(r, 150))
       }
+      // sin throw: si no confirmó, igual devolvemos el client — viem hace wallet_switchEthereumChain al firmar.
       const chain: Chain = VIEM_CHAINS[chainId]
       return createWalletClient({
         account: wallet.address as Address, chain, transport: custom(provider),
@@ -128,7 +130,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         embeddedWallets: { ethereum: { createOnLogin: 'users-without-wallets' } },
         appearance: { theme: 'light', accentColor: '#141414' },
         defaultChain: arbitrum,
-        supportedChains: [arbitrum, base, polygon],
+        supportedChains: [arbitrum, base, polygon, mainnet],
       }}
     >
       <PrivyBridge>{children}</PrivyBridge>
