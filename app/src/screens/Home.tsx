@@ -92,13 +92,10 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
         </button>
       </div>
 
-      <div className="trust">
-        <div className="icircle"><IconShield /></div>
-        <div style={{ flex: 1 }}>
-          <b>Tus fondos son tuyos</b>
-          <p>CarryFi es non-custodial. Vos mantenés el control de tu wallet y de tus claves.</p>
-          <button className="how" onClick={() => go('menu')}><span>¿Cómo funciona?</span> <Chevron w={16} /></button>
-        </div>
+      <div className="actions">
+        <button className="btn primary" onClick={() => go('send')}>Enviar <span>↗</span></button>
+        <button className="btn ghost" onClick={() => go('bridge')}>Bridge <span>⇄</span></button>
+        <button className="btn ghost wide" style={{ minHeight: 58 }} onClick={() => go('receive')}>Recibir <span>↘</span></button>
       </div>
 
       <div className="tokens">
@@ -133,10 +130,13 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
         </div>
       )}
 
-      <div className="actions">
-        <button className="btn primary" onClick={() => go('send')}>Enviar <span>↗</span></button>
-        <button className="btn ghost" onClick={() => go('bridge')}>Bridge <span>⇄</span></button>
-        <button className="btn ghost wide" style={{ minHeight: 58 }} onClick={() => go('receive')}>Recibir <span>↘</span></button>
+      <div className="trust">
+        <div className="icircle"><IconShield /></div>
+        <div style={{ flex: 1 }}>
+          <b>Tus fondos son tuyos</b>
+          <p>CarryFi es non-custodial. Vos mantenés el control de tu wallet y de tus claves.</p>
+          <button className="how" onClick={() => go('menu')}><span>¿Cómo funciona?</span> <Chevron w={16} /></button>
+        </div>
       </div>
     </div>
   )
