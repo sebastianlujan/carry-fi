@@ -24,7 +24,7 @@ export default function Loop() {
 
   const [stage, setStage] = useState<Stage>('gate')
   const [accepted, setAccepted] = useState(false)
-  const [k, setK] = useState(2)
+  const [palanca, setPalanca] = useState(2)
   const [amountStr, setAmountStr] = useState('')
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState(''); const [err, setErr] = useState('')
@@ -37,9 +37,9 @@ export default function Loop() {
   const vaultAccrued = price ? Number(price) / 1e18 - 1 : 0
   const borrowApy = rates?.borrowApy ?? 0
   const carryApy = rates?.supplyApy ?? 0
-  const net = netApy(k, carryApy, borrowApy)
-  const health = healthAt(k)
-  const drop = liquidationDrop(k)
+  const net = netApy(palanca, carryApy, borrowApy)
+  const health = healthAt(palanca)
+  const drop = liquidationDrop(palanca)
   const executable = !!checks && checks.deployed && checks.marketLive
 
   const hasPosition = !!pos && pos.collateralShares > 0n
@@ -49,7 +49,7 @@ export default function Loop() {
     setBusy(true); setErr(''); setMsg('')
     try {
       const signer = await getSigner(ARBITRUM_ID)
-      const flashUsdc = await argtToUsdc((equity * BigInt(Math.round((k - 1) * 1000))) / 1000n)
+      const flashUsdc = await argtToUsdc((equity * BigInt(Math.round((palanca - 1) * 1000))) / 1000n)
       setMsg('1/3 · Autorizando el router en Morpho…')
       const authorized = await clientFor(ARBITRUM_ID).readContract({
         address: MORPHO, abi: morphoAbi, functionName: 'isAuthorized', args: [address, CARRY_LOOP],
@@ -60,7 +60,7 @@ export default function Loop() {
       setMsg('2/3 · Aprobando ARGt…')
       await ensureAllowance(signer, ARBITRUM_ID, CHAINS[ARBITRUM_ID].argt, address, CARRY_LOOP, equity)
       setMsg('3/3 · Ejecutando leverage (flash loan + depósito + colateral + deuda)…')
-      const minArgtOut = ((equity * BigInt(Math.round((k - 1) * 1000))) / 1000n) * 97n / 100n
+      const minArgtOut = ((equity * BigInt(Math.round((palanca - 1) * 1000))) / 1000n) * 97n / 100n
       await runTx(signer, {
         address: CARRY_LOOP, abi: carryLoopAbi as Abi, functionName: 'leverage', args: [equity, flashUsdc, minArgtOut],
       })
@@ -160,15 +160,15 @@ export default function Loop() {
 
         <div className="card dark">
           <div className="big-stat">{fmtPct(net * 100, 1)}</div>
-          <div className="row"><span className="k">APY neto estimado a palanca {k.toFixed(2)}×</span><span className="v" /></div>
+          <div className="row"><span className="k">APY neto estimado a palanca {palanca.toFixed(2)}×</span><span className="v" /></div>
           <hr className="divider" style={{ borderColor: 'rgba(255,254,245,.15)' }} />
-          <div className="row"><span className="k">+ carry (live, market ARGt/USDC)</span><span className="v">{fmtPct(carryApy * 100)} × {k.toFixed(2)}</span></div>
-          <div className="row"><span className="k">− deuda USDC (live)</span><span className="v">{fmtPct(-borrowApy * 100)} × {(k - 1).toFixed(2)}</span></div>
-          <div className="row"><span className="k">− swaps amortizados</span><span className="v">~{fmtPct(-(2 * (k - 1) * 0.003) * 100)}</span></div>
+          <div className="row"><span className="k">+ carry (live, market ARGt/USDC)</span><span className="v">{fmtPct(carryApy * 100)} × {palanca.toFixed(2)}</span></div>
+          <div className="row"><span className="k">− deuda USDC (live)</span><span className="v">{fmtPct(-borrowApy * 100)} × {(palanca - 1).toFixed(2)}</span></div>
+          <div className="row"><span className="k">− swaps amortizados</span><span className="v">~{fmtPct(-(2 * (palanca - 1) * 0.003) * 100)}</span></div>
         </div>
 
-        <input className="slider" type="range" min={1.1} max={2.5} step={0.05} value={k} onChange={(e) => setK(Number(e.target.value))} />
-        <div className="row"><span className="k">Palanca {k.toFixed(2)}×</span><span className="k">salud inicial {health.toFixed(2)}</span></div>
+        <input className="slider" type="range" min={1.1} max={2.5} step={0.05} value={palanca} onChange={(e) => setPalanca(Number(e.target.value))} />
+        <div className="row"><span className="k">Palanca {palanca.toFixed(2)}×</span><span className="k">salud inicial {health.toFixed(2)}</span></div>
 
         <div className="card">
           <div className="row"><span className="k">Te liquidan si ARGt cae</span>
@@ -193,8 +193,8 @@ export default function Loop() {
 
   // ── etapa 2: confirmación con consecuencias ──
   const eq = equity ?? 0n
-  const exposure = (eq * BigInt(Math.round(k * 100))) / 100n
-  const debtArgt = (eq * BigInt(Math.round((k - 1) * 100))) / 100n
+  const exposure = (eq * BigInt(Math.round(palanca * 100))) / 100n
+  const debtArgt = (eq * BigInt(Math.round((palanca - 1) * 100))) / 100n
   return (
     <div className="screen">
       <button className="back" onClick={() => setStage('config')}>← Ajustar</button>
