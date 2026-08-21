@@ -6,7 +6,7 @@ import { useState } from 'react'
 import type { Abi } from 'viem'
 import { useWallet } from '../wallet'
 import { useBalances, useSharePrice, useVaultPosition, useCarryRates, useMarketPosition } from '../hooks'
-import { VAULT_ARGT_PRIME, MORPHO, MARKET_ARGT_USDC, CHAINS, ARBITRUM_ID } from '../chain/registry'
+import { VAULT_ARGT_PRIME, MORPHO, MARKET_ARGT_USDC, CHAINS, ARBITRUM_ID, SHARED_DECIMALS_UNIT } from '../chain/registry'
 import { vaultAbi, morphoAbi } from '../chain/abis'
 import { fmtArgt, parseArgt, fmtPct } from '../chain/format'
 import { runTx, ensureAllowance, errMsg } from '../tx'
@@ -56,8 +56,10 @@ export default function Earn() {
       } else {
         setMsg('Retirando…')
         if (isMarket) {
-          // retiro total → por shares (exacto); parcial → por assets
-          const full = marketPos && amount >= marketPos.argt
+          // retiro total → por shares (exacto, incluye interés, sin polvo); parcial → por assets.
+          // El MAX floorea a 1e12 y la posición se lee sin devengar, así que "todo" se detecta con tolerancia.
+          const full = !!marketPos && marketPos.shares > 0n &&
+            (amount >= marketPos.argt || marketPos.argt - amount < SHARED_DECIMALS_UNIT)
           if (full && marketPos) {
             await runTx(signer, { address: MORPHO, abi: morphoAbi as Abi, functionName: 'withdraw', args: [MARKET_ARGT_USDC, 0n, marketPos.shares, address, address] })
           } else {
