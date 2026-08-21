@@ -39,6 +39,7 @@ contract CarryLoop is IMorphoFlashLoanCallback {
     error FeeTooHigh();
     error ZeroAmount();
     error NoPosition();
+    error PartialNotSupported();
 
     event Leveraged(address indexed user, uint256 equityArgt, uint256 flashUsdc, uint256 collateralShares);
     event Deleveraged(address indexed user, uint256 sharesOut, uint256 debtRepaid, uint256 argtReturned, uint256 fee);
@@ -148,6 +149,9 @@ contract CarryLoop is IMorphoFlashLoanCallback {
         Position memory p = MORPHO.position(MARKET_ID, msg.sender);
         require(p.collateral > 0, NoPosition());
         if (sharesOut == type(uint256).max) sharesOut = p.collateral;
+        // deleverage cierra SIEMPRE toda la deuda ⇒ sólo salida total (parcial no puede recomprar
+        // la deuda con colateral parcial y desalinearía el fee). Salida parcial = feature aparte.
+        require(sharesOut == p.collateral, PartialNotSupported());
 
         Market memory m = MORPHO.market(MARKET_ID);
         uint256 debt = SharesMath.toAssetsUp(p.borrowShares, m.totalBorrowAssets, m.totalBorrowShares);
@@ -239,7 +243,7 @@ contract CarryLoop is IMorphoFlashLoanCallback {
         emit Deleveraged(user, sharesOut, 0, argtOut - fee, fee);
     }
 
-    /// @dev fee sólo sobre profit vs principal; exit total ⇒ principal se resetea.
+    /// @dev sólo salida total (deleverage exige full). Fee sobre profit vs principal; principal ⇒ 0.
     function _settle(address user, uint256 argtLeftover) internal returns (uint256 fee) {
         uint256 base = principal[user];
         principal[user] = 0;
@@ -257,7 +261,7 @@ contract CarryLoop is IMorphoFlashLoanCallback {
         uint256 u = USDC.balanceOf(address(this));
         if (u > 0) USDC.safeTransfer(to, u);
         uint256 s = VAULT.balanceOf(address(this));
-        if (s > 0) VAULT.approve(address(this), 0); // no-op defensivo; las shares nunca deben quedar acá
+        if (s > 0) IERC20(address(VAULT)).safeTransfer(to, s); // shares nunca deben quedar; si quedan, al user
     }
 
     // ───────────────────────── views ─────────────────────────

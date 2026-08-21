@@ -25,6 +25,7 @@ cd app && pnpm dev                                         # dev server
 
 **Base (8453, EID 30184):** adapter `0xe80Af1d12426dB4394b147e04f179a38e7C5Dfe7`, ARGt `0xf016413834E6D1A14F3D628B11D6Ef725a6bdbDD`
 **Polygon (137, EID 30109):** adapter `0xD70ad085684b2A9f4B5d54D7BDB2ecA37a273216`, ARGt `0x50464bE58912745447E24EB3bbDedcee10D3E056`
+**Ethereum (1, EID 30101):** adapter `0x5Eaa8760c3290eb78A2BE5E33b6696bE42e47DD9`, ARGt `0x59863989d080B22476DB95656d0C3CC18be92214` (verificado on-chain 20/8; peers bidireccionales — el brief decía "no soportado" pero el quote funciona en ambos sentidos)
 **LZ Endpoint (all 3 chains):** `0x1a44076050125825900e736c501f859c50fE728c`
 
 Every new address gets verified with `cast call` (name/symbol/token()/peers()) **before**

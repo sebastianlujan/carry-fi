@@ -206,4 +206,16 @@ contract LoopForkTest is Test {
         vm.stopPrank();
         assertGt(shares, 0);
     }
+
+    /// Fix MEDIUM: la salida PARCIAL ahora se rechaza (evita fee mal cobrado y economía rota).
+    function test_partial_deleverage_reverts() public {
+        uint256 flashUsdc = _argtToUsdc(EQUITY);
+        vm.prank(user);
+        loop.leverage(EQUITY, flashUsdc, 0);
+        (uint256 shares,,,) = loop.positionOf(user);
+        vm.prank(user);
+        vm.expectRevert(CarryLoop.PartialNotSupported.selector);
+        loop.deleverage(shares / 2, EQUITY);
+    }
+
 }
