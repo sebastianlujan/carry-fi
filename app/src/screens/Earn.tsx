@@ -3,6 +3,7 @@
 //  · Vault Prime: el vault ERC-4626 del activo (hoy idle ~0%). ARGt = Milestone 2.
 // TRAMPA #1: nada de max*() — balance + preview + simulate. Todos los twins 18 dec.
 import { useState } from 'react'
+import { useEarn } from '../earn'
 import type { Abi, Address } from 'viem'
 import { useQuery } from '@tanstack/react-query'
 import { useWallet } from '../wallet'
@@ -18,8 +19,7 @@ type Venue = 'market' | 'vault'
 
 export default function Earn() {
   const { address, getSigner } = useWallet()
-  const [assetIx, setAssetIx] = useState(0)
-  const [marketIx, setMarketIx] = useState(0)
+  const { assetIx, setAssetIx, marketIx, setMarketIx } = useEarn()
   const asset = EARN_ASSETS[assetIx]
   const market = asset.markets[marketIx] ?? asset.markets[0]
 
@@ -49,7 +49,7 @@ export default function Earn() {
   const valid = amount !== null && amount > 0n &&
     (mode === 'depositar' ? amount <= balArb : amount <= position)
 
-  function pickAsset(ix: number) { setAssetIx(ix); setMarketIx(0); setAmountStr('') }
+  function pickAsset(ix: number) { setAssetIx(ix); setAmountStr('') }
 
   async function go() {
     if (!valid || amount === null || !address) return

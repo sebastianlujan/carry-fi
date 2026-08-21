@@ -4,6 +4,8 @@ import Bike from './Bike'
 import { IconWallet, IconChart, IconDots, IconActivity } from './Icons'
 import NetworkPicker from './NetworkPicker'
 import { useCarryRates } from './hooks'
+import { useEarn } from './earn'
+import { EARN_ASSETS } from './chain/registry'
 import { IconTrend } from './Icons'
 import Home from './screens/Home'
 import Send from './screens/Send'
@@ -27,11 +29,14 @@ function Wordmark() {
 
 
 function ApyPill() {
-  const { data } = useCarryRates()
+  const { assetIx, marketIx } = useEarn()
+  const asset = EARN_ASSETS[assetIx]
+  const market = asset.markets[marketIx] ?? asset.markets[0]
+  const { data } = useCarryRates(market.id)
   const apy = data ? (data.supplyApy * 100).toFixed(1) : '…'
   return (
-    <span className="pill apy" title="Supply APY live del market ARGt/USDC en Morpho">
-      <span className="apy-word">CARRY</span> <b>{apy}%</b> <IconTrend />
+    <span className="pill apy" title={`Supply APY live del market ${asset.symbol}/${market.label} en Morpho`}>
+      <span className="apy-word">{asset.symbol}</span> <b>{apy}%</b> <IconTrend />
     </span>
   )
 }
