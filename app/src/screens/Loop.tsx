@@ -130,7 +130,7 @@ export default function Loop() {
           <h3>El riesgo, sin vueltas</h3>
           <div style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.55 }}>
             Deuda en dólares, colateral en pesos. <b>Si el peso cae ~{(liquidationDrop(2) * 100).toFixed(0)}%
-            (a leverage 2×), te liquidan.</b> El rendimiento es tuyo porque el riesgo también.
+            (a palanca 2×), te liquidan.</b> El rendimiento es tuyo porque el riesgo también.
           </div>
         </div>
         {checks && !executable && (
@@ -156,11 +156,11 @@ export default function Loop() {
     return (
       <div className="screen">
         <button className="back" onClick={() => setStage('gate')}>← Riesgo</button>
-        <div className="title">Elegí tu leverage</div>
+        <div className="title">Elegí tu palanca</div>
 
         <div className="card dark">
           <div className="big-stat">{fmtPct(net * 100, 1)}</div>
-          <div className="row"><span className="k">APY neto estimado a leverage {k.toFixed(2)}×</span><span className="v" /></div>
+          <div className="row"><span className="k">APY neto estimado a palanca {k.toFixed(2)}×</span><span className="v" /></div>
           <hr className="divider" style={{ borderColor: 'rgba(255,254,245,.15)' }} />
           <div className="row"><span className="k">+ carry (live, market ARGt/USDC)</span><span className="v">{fmtPct(carryApy * 100)} × {k.toFixed(2)}</span></div>
           <div className="row"><span className="k">− deuda USDC (live)</span><span className="v">{fmtPct(-borrowApy * 100)} × {(k - 1).toFixed(2)}</span></div>
@@ -168,7 +168,7 @@ export default function Loop() {
         </div>
 
         <input className="slider" type="range" min={1.1} max={2.5} step={0.05} value={k} onChange={(e) => setK(Number(e.target.value))} />
-        <div className="row"><span className="k">Leverage {k.toFixed(2)}×</span><span className="k">salud inicial {health.toFixed(2)}</span></div>
+        <div className="row"><span className="k">Palanca {k.toFixed(2)}×</span><span className="k">salud inicial {health.toFixed(2)}</span></div>
 
         <div className="card">
           <div className="row"><span className="k">Te liquidan si ARGt cae</span>
