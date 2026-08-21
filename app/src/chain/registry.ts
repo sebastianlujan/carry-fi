@@ -5,7 +5,8 @@ import type { Address } from 'viem'
 export const ARBITRUM_ID = 42161
 export const BASE_ID = 8453
 export const POLYGON_ID = 137
-export type ChainId = typeof ARBITRUM_ID | typeof BASE_ID | typeof POLYGON_ID
+export const ETHEREUM_ID = 1
+export type ChainId = typeof ARBITRUM_ID | typeof BASE_ID | typeof POLYGON_ID | typeof ETHEREUM_ID
 
 export interface ChainInfo {
   id: ChainId
@@ -50,9 +51,20 @@ export const CHAINS: Record<ChainId, ChainInfo> = {
     explorer: 'https://polygonscan.com',
     nativeSymbol: 'POL',
   },
+  [ETHEREUM_ID]: {
+    id: ETHEREUM_ID,
+    name: 'Ethereum',
+    eid: 30101,
+    // adapter + ARGt verificados on-chain 20/8/2026 (peers bidireccionales a Arb/Base/Polygon)
+    argt: '0x59863989d080B22476DB95656d0C3CC18be92214',
+    oftAdapter: '0x5Eaa8760c3290eb78A2BE5E33b6696bE42e47DD9',
+    rpcs: ['https://ethereum-rpc.publicnode.com', 'https://eth.llamarpc.com'],
+    explorer: 'https://etherscan.io',
+    nativeSymbol: 'ETH',
+  },
 }
 
-export const CHAIN_IDS: ChainId[] = [ARBITRUM_ID, BASE_ID, POLYGON_ID]
+export const CHAIN_IDS: ChainId[] = [ARBITRUM_ID, BASE_ID, POLYGON_ID, ETHEREUM_ID]
 
 // ── Arbitrum: vault + morpho + loop ─────────────────────────
 export const VAULT_ARGT_PRIME: Address = '0x9Dd3F844747AB78d616BF76DB92756E17A064aDD' // sARGt

@@ -1,8 +1,8 @@
 import { createPublicClient, fallback, http } from 'viem'
-import { arbitrum, base, polygon } from 'viem/chains'
-import { CHAINS, type ChainId, ARBITRUM_ID, BASE_ID, POLYGON_ID } from './registry'
+import { arbitrum, base, polygon, mainnet } from 'viem/chains'
+import { CHAINS, type ChainId, ARBITRUM_ID, BASE_ID, POLYGON_ID, ETHEREUM_ID } from './registry'
 
-export const VIEM_CHAINS = { [ARBITRUM_ID]: arbitrum, [BASE_ID]: base, [POLYGON_ID]: polygon } as const
+export const VIEM_CHAINS = { [ARBITRUM_ID]: arbitrum, [BASE_ID]: base, [POLYGON_ID]: polygon, [ETHEREUM_ID]: mainnet } as const
 
 const make = (id: ChainId) =>
   createPublicClient({
