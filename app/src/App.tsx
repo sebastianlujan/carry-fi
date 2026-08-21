@@ -86,7 +86,7 @@ export default function App() {
 
   const navItems: { id: Screen; label: string; icon: React.ReactNode }[] = [
     { id: 'home', label: 'Wallet', icon: <IconWallet /> },
-    { id: 'loop', label: 'Carry', icon: <Bike width={26} /> },
+    { id: 'loop', label: 'Carry', icon: <Bike width={26} stroke="currentColor" /> },
     { id: 'earn', label: 'Posición', icon: <IconChart /> },
     { id: 'activity', label: 'Actividad', icon: <IconActivity /> },
   ]
