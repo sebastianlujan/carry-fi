@@ -36,6 +36,7 @@ export default function Earn() {
   const balArb = bal ?? 0n
 
   const [venue, setVenue] = useState<Venue>('market')
+  const [showAdv, setShowAdv] = useState(false)
   const [mode, setMode] = useState<'depositar' | 'retirar'>('depositar')
   const [amountStr, setAmountStr] = useState('')
   const [busy, setBusy] = useState(false)
@@ -100,19 +101,25 @@ export default function Earn() {
       <div className="balance" style={{ fontSize: 'clamp(38px,10vw,52px)' }}><span className="cur">$</span>{fmtArgt(position)}</div>
       <div className="sub">{isMarket ? `Market ${asset.symbol}/${market.label} · Morpho · ${fmtPct((rates?.supplyApy ?? 0) * 100)} APY` : `${asset.symbol} Prime · ${vaultPos ? fmtArgt(vaultPos.shares) : '0'} s${asset.symbol}`}</div>
 
-      <div className="seg" style={{ marginTop: 14 }}>
-        <button className={isMarket ? 'on' : ''} onClick={() => { setVenue('market'); setAmountStr('') }}>Market · {rates ? (rates.supplyApy * 100).toFixed(1) : '…'}%</button>
-        <button className={!isMarket ? 'on' : ''} onClick={() => { setVenue('vault'); setAmountStr('') }}>Vault</button>
-      </div>
-
-      {isMarket && asset.markets.length > 1 && (
-        <div className="collat-row">
-          <span className="collat-label">Colateral</span>
-          {asset.markets.map((mk, i) => (
-            <button key={mk.label} className={i === marketIx ? 'on' : ''} onClick={() => { setMarketIx(i); setAmountStr('') }}>
-              {mk.label === 'syrupUSDC' ? 'syrupUSDC · Maple' : mk.label}
-            </button>
-          ))}
+      <button className="adv-toggle" onClick={() => setShowAdv((v) => !v)}>
+        Opciones avanzadas <span>{showAdv ? '▴' : '▾'}</span>
+      </button>
+      {showAdv && (
+        <div className="adv-panel">
+          <div className="seg">
+            <button className={isMarket ? 'on' : ''} onClick={() => { setVenue('market'); setAmountStr('') }}>Market · {rates ? (rates.supplyApy * 100).toFixed(1) : '…'}%</button>
+            <button className={!isMarket ? 'on' : ''} onClick={() => { setVenue('vault'); setAmountStr('') }}>Vault</button>
+          </div>
+          {isMarket && asset.markets.length > 1 && (
+            <div className="collat-row">
+              <span className="collat-label">Colateral</span>
+              {asset.markets.map((mk, i) => (
+                <button key={mk.label} className={i === marketIx ? 'on' : ''} onClick={() => { setMarketIx(i); setAmountStr('') }}>
+                  {mk.label === 'syrupUSDC' ? 'syrupUSDC · Maple' : mk.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

@@ -122,18 +122,6 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
         )}
       </div>
 
-      {balances && walletArgt > 0n && sel === 0 && (
-        <div className="card" style={{ background: '#fff' }}>
-          <h3>Por red</h3>
-          {CHAIN_IDS.map((id) => (
-            <div className="row" key={id}>
-              <span className="k">{CHAINS[id].name}</span>
-              <span className="v">${fmtArgt(balances[id])}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
       <div className="trust">
         <div className="icircle"><IconShield /></div>
         <div style={{ flex: 1 }}>
