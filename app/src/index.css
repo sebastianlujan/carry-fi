@@ -179,7 +179,7 @@ input, select { font-family: inherit; color: inherit; }
 .qr-wrap .qr-card { background: #fff; padding: 16px; border-radius: 24px; box-shadow: 0 6px 24px rgba(20,20,20,.12); }
 .qr-loading { display: flex; align-items: center; justify-content: center; }
 .addr-chip { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;
-  background: transparent; border: 1.5px solid var(--ink); border-radius: 16px; padding: 13px 14px; margin-top: 16px; }
+  background: #fff; border: 1px solid rgba(20,20,20,.08); border-radius: 16px; padding: 13px 14px; margin-top: 16px; }
 .addr-chip .mono { font-size: 13px; font-weight: 700; word-break: break-all; text-align: left; line-height: 1.5; }
 .addr-full { letter-spacing: .01em; }
 
