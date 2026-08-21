@@ -15,34 +15,34 @@ export function useBalances(address: Address | null) {
   })
 }
 
-export function useSharePrice() {
-  return useQuery({ queryKey: ['sharePrice'], queryFn: sharePrice, refetchInterval: 30_000 })
+export function useSharePrice(vault?: `0x${string}`) {
+  return useQuery({ queryKey: ['sharePrice', vault], queryFn: () => sharePrice(vault), refetchInterval: 30_000 })
 }
 
 export function useVaultApy() {
   return useQuery({ queryKey: ['vaultApy'], queryFn: vaultRealizedApy, refetchInterval: 60_000 })
 }
 
-export function useVaultPosition(address: Address | null) {
+export function useVaultPosition(address: Address | null, vault?: `0x${string}`) {
   return useQuery({
-    queryKey: ['vaultPos', address],
-    queryFn: () => vaultPosition(address as Address),
+    queryKey: ['vaultPos', address, vault],
+    queryFn: () => vaultPosition(address as Address, vault),
     enabled: !!address,
     refetchInterval: 15_000,
   })
 }
 
-export function useMarketPosition(address: Address | null) {
+export function useMarketPosition(address: Address | null, marketId?: `0x${string}`) {
   return useQuery({
-    queryKey: ['marketPos', address],
-    queryFn: () => marketSupplyPosition(address as Address),
+    queryKey: ['marketPos', address, marketId],
+    queryFn: () => marketSupplyPosition(address as Address, marketId),
     enabled: !!address,
     refetchInterval: 15_000,
   })
 }
 
-export function useCarryRates() {
-  return useQuery({ queryKey: ['rates'], queryFn: () => marketRates(), refetchInterval: 30_000 })
+export function useCarryRates(marketId?: `0x${string}`) {
+  return useQuery({ queryKey: ['rates', marketId], queryFn: () => marketRates(marketId), refetchInterval: 30_000 })
 }
 
 export function useLoopPosition(address: Address | null) {

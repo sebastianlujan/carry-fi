@@ -86,6 +86,35 @@ export const MARKET_ARGT_USDC = {
   lltv: LLTV_77,
 } as const
 
+// ── Activos que rinden (Earn): market Morpho + vault Prime por activo ──────
+// Todo verificado on-chain 21/8/2026 (params vía idToMarketParams, symbols vía cast).
+export interface MarketParams { loanToken: Address; collateralToken: Address; oracle: Address; irm: Address; lltv: bigint }
+
+export const VAULT_BRAT_PRIME: Address = '0x207396CBe2F6f50670EAa69584C9F723924C7fE9'
+export const BRAT_ARBITRUM_ADDR: Address = '0xC4ed6Aba5373D78E160F4df39e011F078Be54df8'
+export const MARKET_BRAT_USDC_ID = '0xe752b1f5e00a1fe900ca1db774326e0f9541d8d3a22bdb14eb6a38216fb0c4d9' as const
+export const MARKET_BRAT_USDC: MarketParams = {
+  loanToken: BRAT_ARBITRUM_ADDR,
+  collateralToken: USDC_ARBITRUM,
+  oracle: '0x42fA6a6F37008eD1f29798a8146C14Bf3abcf982',
+  irm: IRM_ADAPTIVE_CURVE,
+  lltv: LLTV_77,
+}
+
+export interface EarnAsset {
+  symbol: string
+  name: string
+  token: Address          // token en Arbitrum
+  vault: Address          // <symbol> Prime (ERC-4626)
+  marketId: `0x${string}` // market Morpho Blue donde se suplea
+  market: MarketParams
+}
+export const EARN_ASSETS: EarnAsset[] = [
+  { symbol: 'ARGt', name: 'Argentine Peso token', token: ARGT_ARBITRUM_ADDR, vault: VAULT_ARGT_PRIME, marketId: MARKET_ARGT_USDC_ID, market: MARKET_ARGT_USDC },
+  { symbol: 'BRAt', name: 'Brazilian Real token', token: BRAT_ARBITRUM_ADDR, vault: VAULT_BRAT_PRIME, marketId: MARKET_BRAT_USDC_ID, market: MARKET_BRAT_USDC },
+]
+
+
 // contratos nuestros (post-deploy; vacíos ⇒ la UI gatea el Loop con el motivo)
 export const CARRY_LOOP = (import.meta.env.VITE_CARRY_LOOP ?? '') as Address | ''
 export const SARGT_ORACLE = (import.meta.env.VITE_SARGT_ORACLE ?? '') as Address | ''

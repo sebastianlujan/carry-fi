@@ -1,13 +1,15 @@
-// Rendimiento. DOS venues:
-//  · Market (default): supply directo a Morpho Blue ARGt/USDC → 13,4% real. Posición a tu nombre.
-//  · Vault ARGt Prime: el vault ERC-4626 del Milestone 2 (hoy idle ~0%, se mantiene).
-// TRAMPA #1: nada de max*() — balance + preview + simulate.
+// Rendimiento multi-activo. Elegís el activo (ARGt/BRAt) y el venue:
+//  · Market (default): supply directo al market Morpho Blue del activo → carry real (~12-13%).
+//  · Vault Prime: el vault ERC-4626 del activo (hoy idle ~0%). ARGt = Milestone 2.
+// TRAMPA #1: nada de max*() — balance + preview + simulate. Todos los twins 18 dec.
 import { useState } from 'react'
-import type { Abi } from 'viem'
+import type { Abi, Address } from 'viem'
+import { useQuery } from '@tanstack/react-query'
 import { useWallet } from '../wallet'
-import { useBalances, useSharePrice, useVaultPosition, useCarryRates, useMarketPosition } from '../hooks'
-import { VAULT_ARGT_PRIME, MORPHO, MARKET_ARGT_USDC, CHAINS, ARBITRUM_ID, SHARED_DECIMALS_UNIT } from '../chain/registry'
-import { vaultAbi, morphoAbi } from '../chain/abis'
+import { useSharePrice, useVaultPosition, useCarryRates, useMarketPosition } from '../hooks'
+import { MORPHO, EARN_ASSETS, ARBITRUM_ID, SHARED_DECIMALS_UNIT } from '../chain/registry'
+import { vaultAbi, morphoAbi, erc20Abi } from '../chain/abis'
+import { clientFor } from '../chain/clients'
 import { fmtArgt, parseArgt, fmtPct } from '../chain/format'
 import { runTx, ensureAllowance, errMsg } from '../tx'
 import EarnChart from '../EarnChart'
@@ -16,11 +18,20 @@ type Venue = 'market' | 'vault'
 
 export default function Earn() {
   const { address, getSigner } = useWallet()
-  const { data: balances, refetch: refetchBal } = useBalances(address)
-  const { data: price } = useSharePrice()
-  const { data: vaultPos, refetch: refetchVault } = useVaultPosition(address)
-  const { data: marketPos, refetch: refetchMarket } = useMarketPosition(address)
-  const { data: rates } = useCarryRates()
+  const [assetIx, setAssetIx] = useState(0)
+  const asset = EARN_ASSETS[assetIx]
+
+  const { data: price } = useSharePrice(asset.vault)
+  const { data: vaultPos, refetch: refetchVault } = useVaultPosition(address, asset.vault)
+  const { data: marketPos, refetch: refetchMarket } = useMarketPosition(address, asset.marketId)
+  const { data: rates } = useCarryRates(asset.marketId)
+  const { data: bal, refetch: refetchBal } = useQuery({
+    queryKey: ['earnBal', asset.token, address],
+    queryFn: () => clientFor(ARBITRUM_ID).readContract({ address: asset.token, abi: erc20Abi, functionName: 'balanceOf', args: [address as Address] }),
+    enabled: !!address,
+    refetchInterval: 15_000,
+  })
+  const balArb = bal ?? 0n
 
   const [venue, setVenue] = useState<Venue>('market')
   const [mode, setMode] = useState<'depositar' | 'retirar'>('depositar')
@@ -28,47 +39,46 @@ export default function Earn() {
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState(''); const [err, setErr] = useState('')
 
-  const balArb = balances?.[ARBITRUM_ID] ?? 0n
   const amount = parseArgt(amountStr)
   const isMarket = venue === 'market'
-  const position = isMarket ? (marketPos?.argt ?? 0n) : (vaultPos?.argtValue ?? 0n)
-  const venueApy = isMarket ? (rates?.supplyApy ?? 0) : 0 // vault realiza ~0 (idle)
+  const position = isMarket ? (marketPos?.assets ?? 0n) : (vaultPos?.argtValue ?? 0n)
+  const venueApy = isMarket ? (rates?.supplyApy ?? 0) : 0
   const accrued = price ? (Number(price) / 1e18 - 1) * 100 : null
   const valid = amount !== null && amount > 0n &&
     (mode === 'depositar' ? amount <= balArb : amount <= position)
+
+  function pickAsset(ix: number) { setAssetIx(ix); setAmountStr('') }
 
   async function go() {
     if (!valid || amount === null || !address) return
     setBusy(true); setErr(''); setMsg('')
     try {
       const signer = await getSigner(ARBITRUM_ID)
-      const spender = isMarket ? MORPHO : VAULT_ARGT_PRIME
+      const spender = isMarket ? MORPHO : asset.vault
       if (mode === 'depositar') {
-        setMsg('1/2 · Aprobando ARGt…')
-        await ensureAllowance(signer, ARBITRUM_ID, CHAINS[ARBITRUM_ID].argt, address, spender, amount)
+        setMsg('1/2 · Aprobando…')
+        await ensureAllowance(signer, ARBITRUM_ID, asset.token, address, spender, amount)
         setMsg('2/2 · Depositando…')
         if (isMarket) {
-          await runTx(signer, { address: MORPHO, abi: morphoAbi as Abi, functionName: 'supply', args: [MARKET_ARGT_USDC, amount, 0n, address, '0x'] })
+          await runTx(signer, { address: MORPHO, abi: morphoAbi as Abi, functionName: 'supply', args: [asset.market, amount, 0n, address, '0x'] })
         } else {
-          await runTx(signer, { address: VAULT_ARGT_PRIME, abi: vaultAbi as Abi, functionName: 'deposit', args: [amount, address] })
+          await runTx(signer, { address: asset.vault, abi: vaultAbi as Abi, functionName: 'deposit', args: [amount, address] })
         }
-        setMsg('Depositado ✓ — tus pesos ya están rindiendo.')
+        setMsg('Depositado ✓ — rindiendo.')
       } else {
         setMsg('Retirando…')
         if (isMarket) {
-          // retiro total → por shares (exacto, incluye interés, sin polvo); parcial → por assets.
-          // El MAX floorea a 1e12 y la posición se lee sin devengar, así que "todo" se detecta con tolerancia.
           const full = !!marketPos && marketPos.shares > 0n &&
-            (amount >= marketPos.argt || marketPos.argt - amount < SHARED_DECIMALS_UNIT)
+            (amount >= marketPos.assets || marketPos.assets - amount < SHARED_DECIMALS_UNIT)
           if (full && marketPos) {
-            await runTx(signer, { address: MORPHO, abi: morphoAbi as Abi, functionName: 'withdraw', args: [MARKET_ARGT_USDC, 0n, marketPos.shares, address, address] })
+            await runTx(signer, { address: MORPHO, abi: morphoAbi as Abi, functionName: 'withdraw', args: [asset.market, 0n, marketPos.shares, address, address] })
           } else {
-            await runTx(signer, { address: MORPHO, abi: morphoAbi as Abi, functionName: 'withdraw', args: [MARKET_ARGT_USDC, amount, 0n, address, address] })
+            await runTx(signer, { address: MORPHO, abi: morphoAbi as Abi, functionName: 'withdraw', args: [asset.market, amount, 0n, address, address] })
           }
         } else {
           const shares = price ? (amount * 10n ** 18n + price - 1n) / price : 0n
           const capped = shares > (vaultPos?.shares ?? 0n) ? (vaultPos?.shares ?? 0n) : shares
-          await runTx(signer, { address: VAULT_ARGT_PRIME, abi: vaultAbi as Abi, functionName: 'redeem', args: [capped, address, address] })
+          await runTx(signer, { address: asset.vault, abi: vaultAbi as Abi, functionName: 'redeem', args: [capped, address, address] })
         }
         setMsg('Retirado ✓')
       }
@@ -78,9 +88,15 @@ export default function Earn() {
 
   return (
     <div className="screen">
-      <div className="balance-label">Rindiendo</div>
-      <div className="balance" style={{ fontSize: 'clamp(40px,11vw,56px)' }}><span className="cur">$</span>{fmtArgt(position)}</div>
-      <div className="sub">{isMarket ? `Market ARGt/USDC · Morpho · ${fmtPct((rates?.supplyApy ?? 0) * 100)} APY` : `Vault ARGt Prime · ${vaultPos ? fmtArgt(vaultPos.shares) : '0'} sARGt`}</div>
+      <div className="seg" style={{ marginTop: 8 }}>
+        {EARN_ASSETS.map((a, i) => (
+          <button key={a.symbol} className={i === assetIx ? 'on' : ''} onClick={() => pickAsset(i)}>{a.symbol}</button>
+        ))}
+      </div>
+
+      <div className="balance-label" style={{ marginTop: 14 }}>Rindiendo</div>
+      <div className="balance" style={{ fontSize: 'clamp(38px,10vw,52px)' }}><span className="cur">$</span>{fmtArgt(position)}</div>
+      <div className="sub">{isMarket ? `Market ${asset.symbol}/USDC · Morpho · ${fmtPct((rates?.supplyApy ?? 0) * 100)} APY` : `${asset.symbol} Prime · ${vaultPos ? fmtArgt(vaultPos.shares) : '0'} s${asset.symbol}`}</div>
 
       <div className="seg" style={{ marginTop: 14 }}>
         <button className={isMarket ? 'on' : ''} onClick={() => { setVenue('market'); setAmountStr('') }}>Market · {rates ? (rates.supplyApy * 100).toFixed(1) : '…'}%</button>
@@ -88,7 +104,7 @@ export default function Earn() {
       </div>
 
       <div className="card dark">
-        <h3>{isMarket ? 'El carry, directo al market' : 'Vault ARGt Prime (Milestone 2)'}</h3>
+        <h3>{isMarket ? `El carry ${asset.symbol}, directo al market` : `${asset.symbol} Prime${asset.symbol === 'ARGt' ? ' (Milestone 2)' : ''}`}</h3>
         {isMarket ? (
           <>
             <div className="row"><span className="k">Supply APY (live)</span><span className="v">{rates ? fmtPct(rates.supplyApy * 100) : '…'}</span></div>
@@ -111,7 +127,7 @@ export default function Earn() {
       </div>
 
       <div className="field">
-        <label>Monto en ARGt
+        <label>Monto en {asset.symbol}
           <button className="max-btn" onClick={() => {
             const src = mode === 'depositar' ? balArb : position
             setAmountStr((Number(src / 10n ** 12n) / 1e6).toString().replace('.', ','))

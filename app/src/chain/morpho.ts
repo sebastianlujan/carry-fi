@@ -42,15 +42,15 @@ const VIRTUAL_SHARES = 1_000_000n
 const VIRTUAL_ASSETS = 1n
 
 // Posición de SUPPLY del user en el market ARGt/USDC: cuánto ARGt tiene puesto a rendir.
-export async function marketSupplyPosition(user: Address): Promise<{ shares: bigint; argt: bigint }> {
+export async function marketSupplyPosition(user: Address, marketId: `0x${string}` = MARKET_ARGT_USDC_ID): Promise<{ shares: bigint; assets: bigint }> {
   const arb = clientFor(ARBITRUM_ID)
   const [pos, m] = await Promise.all([
-    arb.readContract({ address: MORPHO, abi: morphoAbi, functionName: 'position', args: [MARKET_ARGT_USDC_ID, user] }),
-    arb.readContract({ address: MORPHO, abi: morphoAbi, functionName: 'market', args: [MARKET_ARGT_USDC_ID] }),
+    arb.readContract({ address: MORPHO, abi: morphoAbi, functionName: 'position', args: [marketId, user] }),
+    arb.readContract({ address: MORPHO, abi: morphoAbi, functionName: 'market', args: [marketId] }),
   ])
   const shares = pos[0] // supplyShares
   const totalAssets = m[0]
   const totalShares = m[1]
-  const argt = shares === 0n ? 0n : (shares * (totalAssets + VIRTUAL_ASSETS)) / (totalShares + VIRTUAL_SHARES)
-  return { shares, argt }
+  const assets = shares === 0n ? 0n : (shares * (totalAssets + VIRTUAL_ASSETS)) / (totalShares + VIRTUAL_SHARES)
+  return { shares, assets }
 }
